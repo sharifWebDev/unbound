@@ -8,25 +8,26 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements MustVerifyEmail
+class Customer extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $keyType = 'string';
     public $incrementing = false;
+
+    protected $guard = 'customer';
 
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role',
-        'is_active',
+        'phone',
         'otp',
         'otp_expires_at',
         'last_login_at',
         'last_login_ip',
+        'is_active',
     ];
 
     protected $hidden = [
@@ -50,16 +51,6 @@ class User extends Authenticatable implements MustVerifyEmail
         static::creating(function ($model) {
             $model->id = (string) \Illuminate\Support\Str::uuid();
         });
-    }
-
-    public function isSuperAdmin(): bool
-    {
-        return $this->role === 'super_admin';
-    }
-
-    public function isAdmin(): bool
-    {
-        return in_array($this->role, ['super_admin', 'admin']);
     }
 
     public function scopeActive($query)

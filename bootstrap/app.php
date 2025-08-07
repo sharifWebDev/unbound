@@ -11,7 +11,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // 'admin' => \App\Http\Middleware\EnsureIsAdmin::class,
+        // 'customer' => \App\Http\Middleware\RedirectIfNotCustomer::class,
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

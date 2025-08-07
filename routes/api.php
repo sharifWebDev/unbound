@@ -5,7 +5,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
-// path1
+header('Access-Control-Allow-Origin: ' . env('CORS_ALLOWED_ORIGINS', '*'));
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, X-Requested-With');
+header('Access-Control-Allow-Credentials: true');
 
 // Route::post('/admin/login', [AuthController::class, 'login']);
 
