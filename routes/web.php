@@ -4,7 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('admin.login');
+});
+
+Route::get('/admin', function () {
+    return redirect()->route('admin.dashboard');
 });
 
 Route::prefix('admin')->group(function () {
@@ -17,28 +21,17 @@ Route::prefix('admin')->group(function () {
     });
 });
 
-// Dashboard
-Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-
-// Bookings
-Route::get('bookings-admin', [AdminController::class, 'index'])->name('admin.bookings');
-
-// Payments
-Route::get('payment-admin', [AdminController::class, 'index'])->name('admin.payments');
-
-// Coupons
-Route::get('coupons', [AdminController::class, 'index'])->name('admin.coupons');
-
-// Packages
-Route::get('packages', [AdminController::class, 'index'])->name('admin.packages');
-
-// Users
-Route::get('users', [AdminController::class, 'index'])->name('admin.users');
-
-// Profile
-Route::get('profile-admin', [AdminController::class, 'index'])->name('admin.profile');
-
-// Logout (optional - should use POST with Auth)
-Route::get('login.php', function () {
-    return redirect()->route('login');
-})->name('admin.logout'); // or use logout route directly if set up
+Route::prefix('admin')->group(function () {
+    Route::get('dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('bookings', [AdminController::class, 'booking'])->name('admin.bookings.index');
+    Route::get('ongoing-bookings', [AdminController::class, 'ongoingBooking'])->name('admin.ongoing-bookings.details');
+    Route::get('custom-package-requests/details', [AdminController::class, 'customPackageRequestDetails'])->name('admin.custom-package-requests.details');
+    Route::get('payments', [AdminController::class, 'payment'])->name('admin.payments.index');
+    Route::get('payments/receipt', [AdminController::class, 'paymentReceipt'])->name('admin.payments.receipt');
+    Route::get('coupons', [AdminController::class, 'coupon'])->name('admin.coupons.index');
+    Route::get('packages', [AdminController::class, 'package'])->name('admin.packages.index');
+    Route::get('create-package', [AdminController::class, 'packageCreate'])->name('admin.packages.create');
+    Route::get('users', [AdminController::class, 'user'])->name('admin.users.index');
+    Route::get('profile', [AdminController::class, 'profile'])->name('admin.profile');
+    Route::get('login', [AdminController::class, 'login'])->name('admin.login');
+});
