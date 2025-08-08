@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Notifications\Admin\SendOtpNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -53,7 +52,8 @@ class AuthController extends Controller
             ], Response::HTTP_CREATED);
 
         } catch (\Exception $e) {
-            Log::error('Admin registration error: ' . $e->getMessage());
+            Log::error('Admin registration error: '.$e->getMessage());
+
             return response()->json([
                 'message' => 'An error occurred during registration.',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -66,7 +66,7 @@ class AuthController extends Controller
             $credentials = $request->only('email', 'password');
             $remember = $request->boolean('remember');
 
-            if (!Auth::guard('admin')->attempt($credentials, $remember)) {
+            if (! Auth::guard('admin')->attempt($credentials, $remember)) {
                 throw ValidationException::withMessages([
                     'email' => [trans('auth.failed')],
                 ]);
@@ -74,14 +74,14 @@ class AuthController extends Controller
 
             $user = Auth::guard('admin')->user();
 
-            if (!$user->is_active) {
+            if (! $user->is_active) {
                 Auth::guard('admin')->logout();
                 throw ValidationException::withMessages([
                     'email' => [trans('auth.inactive')],
                 ]);
             }
 
-            if (!$user->hasAnyRole(['super_admin', 'admin'])) {
+            if (! $user->hasAnyRole(['super_admin', 'admin'])) {
                 Auth::guard('admin')->logout();
                 throw ValidationException::withMessages([
                     'email' => [trans('auth.unauthorized')],
@@ -102,7 +102,8 @@ class AuthController extends Controller
         } catch (ValidationException $e) {
             throw $e;
         } catch (\Exception $e) {
-            Log::error('Admin login error: ' . $e->getMessage());
+            Log::error('Admin login error: '.$e->getMessage());
+
             return response()->json([
                 'message' => 'An error occurred during login.',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -122,7 +123,8 @@ class AuthController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Admin logout error: ' . $e->getMessage());
+            Log::error('Admin logout error: '.$e->getMessage());
+
             return response()->json([
                 'message' => 'An error occurred during logout.',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -141,7 +143,7 @@ class AuthController extends Controller
             ->where('otp_expires_at', '>', now())
             ->first();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'message' => 'Invalid or expired OTP',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);

@@ -1,4 +1,4 @@
- @extends('layouts.admin')
+ @extends('layouts.app')
  @section('title', 'Bangladesh Unbound - Users Management')
  @section('page-title', 'Users Management')
  @section('breadcrumb')
@@ -6,7 +6,7 @@
      <nav class="breadcrumb-container" aria-label="breadcrumb" class="mb-4">
          <ol class="breadcrumb">
              <li class="breadcrumb-item">
-                 <a href="dashboard">
+                 <a href="{{route('admin.dashboard')}}">
                      <img src="{{ asset('backend/img/ico/ico-dashboard.svg')}}" alt="Dashboard" class="breadcrumb-icon">
                      Dashboard
                  </a>

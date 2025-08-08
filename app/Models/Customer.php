@@ -14,6 +14,7 @@ class Customer extends Authenticatable implements MustVerifyEmail
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $keyType = 'string';
+
     public $incrementing = false;
 
     protected $guard = 'customer';

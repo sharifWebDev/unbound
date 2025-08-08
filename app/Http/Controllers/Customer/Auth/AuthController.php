@@ -52,7 +52,8 @@ class AuthController extends Controller
             ], Response::HTTP_CREATED);
 
         } catch (\Exception $e) {
-            Log::error('Customer registration error: ' . $e->getMessage());
+            Log::error('Customer registration error: '.$e->getMessage());
+
             return response()->json([
                 'message' => 'An error occurred during registration.',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -65,7 +66,7 @@ class AuthController extends Controller
             $credentials = $request->only('email', 'password');
             $remember = $request->boolean('remember');
 
-            if (!Auth::guard('customer')->attempt($credentials, $remember)) {
+            if (! Auth::guard('customer')->attempt($credentials, $remember)) {
                 throw ValidationException::withMessages([
                     'email' => [trans('auth.failed')],
                 ]);
@@ -73,7 +74,7 @@ class AuthController extends Controller
 
             $customer = Auth::guard('customer')->user();
 
-            if (!$customer->is_active) {
+            if (! $customer->is_active) {
                 Auth::guard('customer')->logout();
                 throw ValidationException::withMessages([
                     'email' => [trans('auth.inactive')],
@@ -94,7 +95,8 @@ class AuthController extends Controller
         } catch (ValidationException $e) {
             throw $e;
         } catch (\Exception $e) {
-            Log::error('Customer login error: ' . $e->getMessage());
+            Log::error('Customer login error: '.$e->getMessage());
+
             return response()->json([
                 'message' => 'An error occurred during login.',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -114,7 +116,8 @@ class AuthController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Customer logout error: ' . $e->getMessage());
+            Log::error('Customer logout error: '.$e->getMessage());
+
             return response()->json([
                 'message' => 'An error occurred during logout.',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -133,7 +136,7 @@ class AuthController extends Controller
             ->where('otp_expires_at', '>', now())
             ->first();
 
-        if (!$customer) {
+        if (! $customer) {
             return response()->json([
                 'message' => 'Invalid or expired OTP',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);

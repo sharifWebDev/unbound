@@ -1,3 +1,4 @@
+@if(request()->is('admin/*'))
 <div class="sidebar">
     <div class="logo">
         <a href="{{ route('admin.dashboard') }}">
@@ -31,3 +32,29 @@
         </a>
     </nav>
 </div>
+@elseif(request()->is('customer/*'))
+<div class="sidebar">
+    <div class="logo">
+        <a href="{{ route('customer.dashboard') }}">
+            <img src="{{ asset('backend/img/logo.png') }}" alt="Bangladesh Unbound" class="img-fluid">
+        </a>
+    </div>
+    <nav class="nav flex-column">
+        <a class="nav-link {{ request()->is('customer/dashboard') ? 'active' : '' }}" href="{{ url('customer/dashboard') }}">
+            <img src="{{ asset('backend/img/ico/ico-dashboard.svg') }}" alt=""> Dashboard
+        </a>
+        <a class="nav-link {{ request()->is('customer/bookings') ? 'active' : '' }}" href="{{ url('customer/bookings') }}">
+            <img src="{{ asset('backend/img/ico/ico-bookings.svg') }}" alt=""> Bookings
+        </a>
+        <a class="nav-link {{ request()->is('customer/payment') ? 'active' : '' }}" href="{{ url('customer/payments') }}">
+            <img src="{{ asset('backend/img/ico/ico-payment.svg') }}" alt=""> Payment
+        </a>
+        <a class="nav-link {{ request()->is('customer/profile') ? 'active' : '' }}" href="{{ url('customer/profile') }}">
+            <img src="{{ asset('backend/img/ico/ico-profile.svg') }}" alt=""> Profile
+        </a>
+        <a class="nav-link" href="{{ url('customer/login') }}">
+            <img src="{{ asset('backend/img/ico/ico-logout.svg') }}" alt=""> Logout
+        </a>
+    </nav>
+</div>
+@endif

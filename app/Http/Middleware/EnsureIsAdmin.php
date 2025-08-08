@@ -10,7 +10,7 @@ class EnsureIsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::guard('admin')->check()) {
+        if (! Auth::guard('admin')->check()) {
             return response()->json([
                 'message' => 'Unauthenticated.',
             ], Response::HTTP_UNAUTHORIZED);
@@ -18,14 +18,15 @@ class EnsureIsAdmin
 
         $user = Auth::guard('admin')->user();
 
-        if (!$user->is_active) {
+        if (! $user->is_active) {
             Auth::guard('admin')->logout();
+
             return response()->json([
                 'message' => 'Your account is inactive.',
             ], Response::HTTP_FORBIDDEN);
         }
 
-        if (!$user->isAdmin()) {
+        if (! $user->isAdmin()) {
             return response()->json([
                 'message' => 'Unauthorized access.',
             ], Response::HTTP_FORBIDDEN);

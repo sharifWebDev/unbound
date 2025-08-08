@@ -118,13 +118,13 @@
      <nav class="breadcrumb-container" aria-label="breadcrumb" class="mb-4">
          <ol class="breadcrumb">
              <li class="breadcrumb-item">
-                 <a href="{{route('admin.dashboard')}}">
+                 <a href="{{route('customer.dashboard')}}">
                      <img src="{{ asset('backend/img/ico/ico-dashboard.svg')}}" alt="Dashboard" class="breadcrumb-icon">
                      Dashboard
                  </a>
              </li>
              <li class="breadcrumb-item">
-                 <a href="payments">
+                 <a href="{{ route('customer.payments.index') }}">
                      <img src="{{ asset('backend/img/ico/ico-payment.svg')}}" alt="Payment" class="breadcrumb-icon">
                      Payment
                  </a>

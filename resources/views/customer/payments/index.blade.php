@@ -6,13 +6,13 @@
      <nav class="breadcrumb-container" aria-label="breadcrumb" class="mb-4">
          <ol class="breadcrumb">
              <li class="breadcrumb-item">
-                 <a href="{{route('admin.dashboard')}}">
-                     <img src="{{ asset('backend/img/ico/ico-dashboard.svg')}}" alt="Dashboard" class="breadcrumb-icon">
+                 <a href="{{ route('customer.dashboard') }}">
+                     <img src="{{ asset('backend/img/ico/ico-dashboard.svg') }}" alt="Dashboard" class="breadcrumb-icon">
                      Dashboard
                  </a>
              </li>
              <li class="breadcrumb-item active" aria-current="page">
-                 <img src="{{ asset('backend/img/ico/ico-payment.svg')}}" alt="Payment" class="breadcrumb-icon">
+                 <img src="{{ asset('backend/img/ico/ico-payment.svg') }}" alt="Payment" class="breadcrumb-icon">
                  Payment Management
              </li>
          </ol>
@@ -24,7 +24,7 @@
          <div class="col-md-4">
              <div class="payment-summary-card">
                  <div class="payment-summary-icon">
-                     <img src="{{ asset('backend/img/ico/ico-payment.svg')}}" alt="Total Paid" class="summary-icon">
+                     <img src="{{ asset('backend/img/ico/ico-payment.svg') }}" alt="Total Paid" class="summary-icon">
                  </div>
                  <div class="payment-summary-content">
                      <h4>$4,800</h4>
@@ -35,7 +35,7 @@
          <div class="col-md-4">
              <div class="payment-summary-card pending">
                  <div class="payment-summary-icon">
-                     <img src="{{ asset('backend/img/ico/ico-cart.svg')}}" alt="Pending" class="summary-icon">
+                     <img src="{{ asset('backend/img/ico/ico-cart.svg') }}" alt="Pending" class="summary-icon">
                  </div>
                  <div class="payment-summary-content">
                      <h4>$1,700</h4>
@@ -46,7 +46,7 @@
          <div class="col-md-4">
              <div class="payment-summary-card refunded">
                  <div class="payment-summary-icon">
-                     <img src="{{ asset('backend/img/ico/ico-status.svg')}}" alt="Refunded" class="summary-icon">
+                     <img src="{{ asset('backend/img/ico/ico-status.svg') }}" alt="Refunded" class="summary-icon">
                  </div>
                  <div class="payment-summary-content">
                      <h4>$2,500</h4>
@@ -106,7 +106,7 @@
      <div class="mb-4">
          <div class="mb-3 d-flex justify-content-between align-items-center">
              <h3 class="mb-0 section-title">
-                 <img src="{{ asset('backend/img/ico/ico-cart.svg')}}" alt="Pending" class="section-icon">
+                 <img src="{{ asset('backend/img/ico/ico-cart.svg') }}" alt="Pending" class="section-icon">
                  Pending Payments
              </h3>
              <div class="results-info">
@@ -119,7 +119,6 @@
                  <thead>
                      <tr>
                          <th>Order ID</th>
-                         <th>Customer Details</th>
                          <th>Tour Name</th>
                          <th>Due Date</th>
                          <th class="text-center">Amount Due</th>
@@ -133,20 +132,11 @@
                              <strong>#BK002</strong>
                          </td>
                          <td>
-                             <div class="guide-info">
-                                 <img src="{{ asset('backend/img/avatar.jpg')}}" alt="Guide" class="guide-avatar">
-                                 <div>
-                                     <div class="fw-semibold">Aziz Ahmed</div>
-                                     <small class="text-muted">USA</small>
-                                 </div>
-                             </div>
-                         </td>
-                         <td>
-                             <img src="{{ asset('backend/img/ico/ico-package.svg')}}" alt="Tour" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package.svg') }}" alt="Tour" class="table-cell-icon">
                              Sundarbans Adventure
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-calendar.svg')}}" alt="Date" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-calendar.svg') }}" alt="Date" class="table-cell-icon">
                              10 May 2024
                          </td>
                          <td class="text-center">
@@ -162,7 +152,7 @@
                          </td>
                          <td>
                              <button class="btn btn-pay-now">
-                                 Add Payment <img src="{{ asset('backend/img/ico/ico-cart.svg')}}" alt="">
+                                 Pay Now <img src="{{ asset('backend/img/ico/ico-cart.svg') }}" alt="">
                              </button>
                          </td>
                      </tr>
@@ -171,20 +161,11 @@
                              <strong>#BK003</strong>
                          </td>
                          <td>
-                             <div class="guide-info">
-                                 <img src="{{ asset('backend/img/avatar.jpg')}}" alt="Guide" class="guide-avatar">
-                                 <div>
-                                     <div class="fw-semibold">Aziz Ahmed</div>
-                                     <small class="text-muted">USA</small>
-                                 </div>
-                             </div>
-                         </td>
-                         <td>
-                             <img src="{{ asset('backend/img/ico/ico-package.svg')}}" alt="Tour" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package.svg') }}" alt="Tour" class="table-cell-icon">
                              Cox's Bazar Beach
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-calendar.svg')}}" alt="Date" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-calendar.svg') }}" alt="Date" class="table-cell-icon">
                              20 May 2024
                          </td>
                          <td class="text-center">
@@ -200,7 +181,7 @@
                          </td>
                          <td>
                              <button class="btn btn-pay-now">
-                                 Add Payment <img src="{{ asset('backend/img/ico/ico-cart.svg')}}" alt="">
+                                 Pay Now <img src="{{ asset('backend/img/ico/ico-cart.svg') }}" alt="">
                              </button>
                          </td>
                      </tr>
@@ -291,7 +272,7 @@
      <div class="mb-4">
          <div class="mb-3 d-flex justify-content-between align-items-center">
              <h3 class="mb-0 section-title">
-                 <img src="{{ asset('backend/img/ico/ico-status.svg')}}" alt="History" class="section-icon">
+                 <img src="{{ asset('backend/img/ico/ico-status.svg') }}" alt="History" class="section-icon">
                  Payment History
              </h3>
              <div class="results-info">
@@ -322,11 +303,11 @@
                              <strong>#BK001</strong>
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package.svg')}}" alt="Tour" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package.svg') }}" alt="Tour" class="table-cell-icon">
                              Old Dhaka Tour
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-calendar.svg')}}" alt="Date" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-calendar.svg') }}" alt="Date" class="table-cell-icon">
                              25 Apr 2024
                          </td>
                          <td>
@@ -337,8 +318,8 @@
                              <span class="badge bg-success">Completed</span>
                          </td>
                          <td>
-                             <a href="receipt.php?txn=TXN001" class="btn btn-download-receipt">
-                                 <img src="{{ asset('backend/img/ico/ico-map.svg')}}" alt="Download">
+                             <a href="{{url('customer/payments/receipt')}}?txn=TXN001" class="btn btn-download-receipt">
+                                 <img src="{{ asset('backend/img/ico/ico-map.svg') }}" alt="Download">
                              </a>
                          </td>
                      </tr>
@@ -350,11 +331,11 @@
                              <strong>#BK002</strong>
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package.svg')}}" alt="Tour" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package.svg') }}" alt="Tour" class="table-cell-icon">
                              Sundarbans Adventure
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-calendar.svg')}}" alt="Date" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-calendar.svg') }}" alt="Date" class="table-cell-icon">
                              28 Apr 2024
                          </td>
                          <td>
@@ -365,8 +346,8 @@
                              <span class="badge bg-success">Completed</span>
                          </td>
                          <td>
-                             <a href="receipt.php?txn=TXN002" class="btn btn-download-receipt">
-                                 <img src="{{ asset('backend/img/ico/ico-map.svg')}}" alt="Download">
+                             <a href="{{url('customer/payments/receipt')}}?txn=TXN002" class="btn btn-download-receipt">
+                                 <img src="{{ asset('backend/img/ico/ico-map.svg') }}" alt="Download">
                              </a>
                          </td>
                      </tr>
@@ -378,11 +359,11 @@
                              <strong>#BK003</strong>
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package.svg')}}" alt="Tour" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package.svg') }}" alt="Tour" class="table-cell-icon">
                              Cox's Bazar Beach
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-calendar.svg')}}" alt="Date" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-calendar.svg') }}" alt="Date" class="table-cell-icon">
                              30 Apr 2024
                          </td>
                          <td>
@@ -393,8 +374,8 @@
                              <span class="badge bg-success">Completed</span>
                          </td>
                          <td>
-                             <a href="receipt.php?txn=TXN003" class="btn btn-download-receipt">
-                                 <img src="{{ asset('backend/img/ico/ico-map.svg')}}" alt="Download">
+                             <a href="{{url('customer/payments/receipt')}}?txn=TXN003" class="btn btn-download-receipt">
+                                 <img src="{{ asset('backend/img/ico/ico-map.svg') }}" alt="Download">
                              </a>
                          </td>
                      </tr>
@@ -406,11 +387,11 @@
                              <strong>#BK004</strong>
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package.svg')}}" alt="Tour" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package.svg') }}" alt="Tour" class="table-cell-icon">
                              Sylhet Tea Gardens
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-calendar.svg')}}" alt="Date" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-calendar.svg') }}" alt="Date" class="table-cell-icon">
                              15 Apr 2024
                          </td>
                          <td>
@@ -421,8 +402,8 @@
                              <span class="badge bg-success">Completed</span>
                          </td>
                          <td>
-                             <a href="receipt.php?txn=TXN004" class="btn btn-download-receipt">
-                                 <img src="{{ asset('backend/img/ico/ico-map.svg')}}" alt="Download">
+                             <a href="{{url('customer/payments/receipt')}}?txn=TXN004" class="btn btn-download-receipt">
+                                 <img src="{{ asset('backend/img/ico/ico-map.svg') }}" alt="Download">
                              </a>
                          </td>
                      </tr>
@@ -434,11 +415,11 @@
                              <strong>#BK005</strong>
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package.svg')}}" alt="Tour" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package.svg') }}" alt="Tour" class="table-cell-icon">
                              Chittagong Hill Tracts
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-calendar.svg')}}" alt="Date" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-calendar.svg') }}" alt="Date" class="table-cell-icon">
                              05 May 2024
                          </td>
                          <td>
@@ -449,8 +430,8 @@
                              <span class="badge bg-danger">Refunded</span>
                          </td>
                          <td>
-                             <a href="receipt.php?txn=TXN005" class="btn btn-download-receipt">
-                                 <img src="{{ asset('backend/img/ico/ico-map.svg')}}" alt="Download">
+                             <a href="{{url('customer/payments/receipt')}}?txn=TXN005" class="btn btn-download-receipt">
+                                 <img src="{{ asset('backend/img/ico/ico-map.svg') }}" alt="Download">
                              </a>
                          </td>
                      </tr>
@@ -490,8 +471,11 @@
              </div>
          </div>
      </div>
+
+
  @endsection
  @section('scripts')
+
      <script>
          document.addEventListener('DOMContentLoaded', function() {
              // Pending Payments functionality
@@ -499,6 +483,7 @@
              const paymentMethodFilter = document.getElementById('paymentMethodFilter');
              const dueDateFilter = document.getElementById('dueDateFilter');
              const pendingEntriesPerPage = document.getElementById('pendingEntriesPerPage');
+             const pendingSearchButton = document.getElementById('pendingSearchButton');
              const clearPendingFilters = document.getElementById('clearPendingFilters');
              const pendingTableRows = document.querySelectorAll('#pendingPaymentsTable tbody tr');
 
@@ -511,6 +496,7 @@
              const historyPaymentMethodFilter = document.getElementById('historyPaymentMethodFilter');
              const historyStatusFilter = document.getElementById('historyStatusFilter');
              const historyEntriesPerPage = document.getElementById('historyEntriesPerPage');
+             const historySearchButton = document.getElementById('historySearchButton');
              const clearHistoryFilters = document.getElementById('clearHistoryFilters');
              const historyTableRows = document.querySelectorAll('#paymentHistoryTable tbody tr');
 
@@ -530,7 +516,6 @@
                          .toLowerCase();
                      const tourName = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
                      const paymentMethod = row.querySelector('.payment-method-select').value.toLowerCase();
-                     const dueDate = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
 
                      // Search filter
                      const matchesSearch = !searchTerm ||
@@ -541,10 +526,9 @@
                      // Payment method filter
                      const matchesMethod = !methodValue || paymentMethod.includes(methodValue);
 
-                     // Due date filter (simplified - in real app would use actual date comparison)
+                     // Due date filter (simplified)
                      let matchesDueDate = true;
                      if (dueDateValue) {
-                         // This is a simplified implementation
                          matchesDueDate = true; // Would implement actual date logic here
                      }
 
@@ -773,10 +757,7 @@
                  updatePendingPagination();
              });
 
-             // Pending Search button event listener
-             document.getElementById('pendingSearchButton').addEventListener('click', function() {
-                 performPendingSearch();
-             });
+             pendingSearchButton.addEventListener('click', performPendingSearch);
 
              clearPendingFilters.addEventListener('click', function() {
                  pendingSearchInput.value = '';
@@ -796,10 +777,7 @@
                  updateHistoryPagination();
              });
 
-             // History Search button event listener
-             document.getElementById('historySearchButton').addEventListener('click', function() {
-                 performHistorySearch();
-             });
+             historySearchButton.addEventListener('click', performHistorySearch);
 
              clearHistoryFilters.addEventListener('click', function() {
                  historySearchInput.value = '';
@@ -816,5 +794,4 @@
              updateHistoryPagination();
          });
      </script>
-
  @endsection

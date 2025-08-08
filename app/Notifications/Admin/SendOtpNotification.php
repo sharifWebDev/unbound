@@ -14,8 +14,7 @@ class SendOtpNotification extends Notification implements ShouldQueue
     public function __construct(
         public string $otp,
         public int $expiryMinutes = 10
-    ) {
-    }
+    ) {}
 
     public function via($notifiable): array
     {

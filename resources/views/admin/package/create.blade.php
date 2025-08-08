@@ -1,4 +1,4 @@
- @extends('layouts.admin')
+ @extends('layouts.app')
  @section('title', 'Bangladesh Unbound - Create Package')
  @section('page-title', 'Create New Package')@push('styles')
     <!-- Quill.js CSS -->
@@ -45,7 +45,7 @@
                  </a>
              </li>
              <li class="breadcrumb-item">
-                 <a href="packages.php">
+                 <a href="{{ route('admin.packages.index') }}">
                      <img src="{{ asset('backend/img/ico/ico-packages.svg') }}" alt="Packages" class="breadcrumb-icon">
                      Packages
                  </a>
@@ -66,7 +66,7 @@
                  <img src="{{ asset('backend/img/ico/ico-packages.svg') }}" alt="Create Package" class="section-icon">
                  Create New Package
              </h3>
-             <a href="packages.php" class="btn btn-add-package">
+             <a href="{{ route('admin.packages.index') }}" class="btn btn-add-package">
                  <i class="bi bi-arrow-left"></i> Back to Packages
              </a>
          </div>

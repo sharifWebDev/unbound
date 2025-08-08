@@ -45,13 +45,13 @@ class RouteServiceProvider extends ServiceProvider
     }
 
     protected function configureRateLimiting(): void
-{
-    RateLimiter::for('admin-auth', function (Request $request) {
-        return Limit::perMinute(5)->by($request->ip());
-    });
+    {
+        RateLimiter::for('admin-auth', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
 
-    RateLimiter::for('customer-auth', function (Request $request) {
-        return Limit::perMinute(10)->by($request->ip());
-    });
-}
+        RateLimiter::for('customer-auth', function (Request $request) {
+            return Limit::perMinute(10)->by($request->ip());
+        });
+    }
 }

@@ -146,7 +146,7 @@
      <nav class="breadcrumb-container" aria-label="breadcrumb" class="mb-4">
          <ol class="breadcrumb">
              <li class="breadcrumb-item">
-                 <a href="{{ route('admin.dashboard') }}">
+                 <a href="{{ route('customer.dashboard') }}">
                      <img src="{{ asset('backend/img/ico/ico-dashboard.svg') }}" alt="Dashboard" class="breadcrumb-icon">
                      Dashboard
                  </a>
@@ -164,11 +164,11 @@
      <div class="mb-4 request-details-header">
          <div class="d-flex align-items-center justify-content-between">
              <h3 class="mb-0 section-title">
-                 <img src="{{ asset('backend/img/ico/ico-custom.svg') }}" alt="Request Details" class="section-icon">
+                 <img src="{{ asset('backend/img/ico/ico-custom.svg')}}" alt="Request Details" class="section-icon">
                  Request Details
              </h3>
              <div class="header-actions">
-                 <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+                 <a href="{{ route('customer.dashboard')}}" class="btn btn-secondary">
                      <i class="bi bi-arrow-left"></i> Back to Dashboard
                  </a>
              </div>
@@ -182,7 +182,7 @@
              <div class="info-card">
                  <div class="info-card-header">
                      <h5 class="info-card-title">
-                         <img src="{{ asset('backend/img/ico/ico-info.svg') }}" alt="Info" class="info-icon">
+                         <img src="{{ asset('backend/img/ico/ico-info.svg')}}" alt="Info" class="info-icon">
                          Basic Information
                      </h5>
                  </div>
@@ -220,13 +220,13 @@
              <div class="info-card">
                  <div class="info-card-header">
                      <h5 class="info-card-title">
-                         <img src="{{ asset('backend/img/ico/ico-users-req.svg') }}" alt="Customer" class="info-icon">
+                         <img src="{{ asset('backend/img/ico/ico-users-req.svg')}}" alt="Customer" class="info-icon">
                          Customer Details
                      </h5>
                  </div>
                  <div class="info-card-body">
                      <div class="mb-3 customer-profile">
-                         <img src="{{ asset('backend/img/avatar.jpg') }}" alt="Customer" class="customer-avatar">
+                         <img src="{{ asset('backend/img/avatar.jpg')}}" alt="Customer" class="customer-avatar">
                          <div class="customer-info">
                              <h6 class="customer-name">Sarah Johnson</h6>
                              <p class="customer-location">UK</p>
@@ -256,7 +256,7 @@
              <div class="info-card">
                  <div class="info-card-header">
                      <h5 class="info-card-title">
-                         <img src="{{ asset('backend/img/ico/ico-package.svg') }}" alt="Tour" class="info-icon">
+                         <img src="{{ asset('backend/img/ico/ico-package.svg')}}" alt="Tour" class="info-icon">
                          Tour Preferences
                      </h5>
                  </div>
@@ -300,7 +300,7 @@
              <div class="info-card">
                  <div class="info-card-header">
                      <h5 class="info-card-title">
-                         <img src="{{ asset('backend/img/ico/ico-services.svg') }}" alt="Services" class="info-icon">
+                         <img src="{{ asset('backend/img/ico/ico-services.svg')}}" alt="Services" class="info-icon">
                          Additional Services
                      </h5>
                  </div>
@@ -332,7 +332,7 @@
              <div class="info-card">
                  <div class="info-card-header">
                      <h5 class="info-card-title">
-                         <img src="{{ asset('backend/img/ico/ico-message.svg') }}" alt="Message" class="info-icon">
+                         <img src="{{ asset('backend/img/ico/ico-message.svg')}}" alt="Message" class="info-icon">
                          Customer Message
                      </h5>
                  </div>
@@ -354,11 +354,11 @@
      <div class="row">
          <div class="col-12">
              <div class="action-buttons-container">
-                 <button class="btn btn-success btn-lg me-3">
-                     <i class="bi bi-check-circle"></i> Approve & Create Package
+                 <button class="btn btn-primary btn-lg me-3">
+                     <i class="bi bi-map"></i> View Package Details
                  </button>
                  <button class="btn btn-primary btn-lg me-3">
-                     <i class="bi bi-envelope"></i> Send Quote
+                     <i class="bi bi-check-circle"></i> Accept Offer
                  </button>
                  <button class="btn btn-danger btn-lg">
                      <i class="bi bi-x-circle"></i> Reject Request
@@ -366,6 +366,4 @@
              </div>
          </div>
      </div>
-
-
  @endsection

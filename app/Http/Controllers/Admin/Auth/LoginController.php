@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -14,8 +13,9 @@ class LoginController extends Controller
         if (Auth::guard('admin')->attempt($credentials)) {
             $user = Auth::guard('admin')->user();
 
-            if (!$user->isAdmin()) {
+            if (! $user->isAdmin()) {
                 Auth::guard('admin')->logout();
+
                 return back()->withErrors([
                     'email' => 'You do not have admin privileges.',
                 ]);

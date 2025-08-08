@@ -1,4 +1,4 @@
- @extends('layouts.admin')
+ @extends('layouts.app')
  @section('title', 'Dashboard')
  @section('page-title', 'Dashboard')
  @section('breadcrumb', '')
@@ -152,7 +152,7 @@
                              </div>
                          </td>
                          <td>
-                             <a href="ongoing-bookings-admin.php" class="btn btn-view-details">
+                             <a href="ongoing-bookings" class="btn btn-view-details">
                                  Details <img src="{{ asset('backend/img/ico/ico-map.svg')}}" alt="">
                              </a>
                          </td>
@@ -424,7 +424,7 @@
                              <span class="status-new">New</span>
                          </td>
                          <td>
-                             <a href="request-details.php?id=#346GF3W" class="btn btn-view-details">
+                             <a href="custom-package-requests/details?id=#346GF3W" class="btn btn-view-details">
                                  Details <img src="{{ asset('backend/img/ico/ico-map.svg')}}" alt="">
                              </a>
                          </td>
@@ -459,7 +459,7 @@
                              <img src="{{ asset('backend/img/ico/ico-status.svg')}}" alt="Status" class="table-cell-icon">
                          </td>
                          <td>
-                             <a href="request-details.php?id=#789ABC2" class="btn btn-view-details">
+                             <a href="custom-package-requests/details?id=#789ABC2" class="btn btn-view-details">
                                  Details <img src="{{ asset('backend/img/ico/ico-map.svg')}}" alt="">
                              </a>
                          </td>
@@ -493,7 +493,7 @@
                              <span class="status-confirmed">Confirmed</span>
                          </td>
                          <td>
-                             <a href="request-details.php?id=#123DEF4" class="btn btn-view-details">
+                             <a href="custom-package-requests/details?id=#123DEF4" class="btn btn-view-details">
                                  Details <img src="{{ asset('backend/img/ico/ico-map.svg')}}" alt="">
                              </a>
                          </td>
@@ -503,7 +503,3 @@
          </div>
      </div>
  @endsection
-
- @push('.js')
-     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
- @endpush

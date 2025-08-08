@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\Controller;
 
-class AdminController extends Controller
+class AdminDashboardController extends Controller
 {
     public function dashboard()
     {
-        return view('admin.home');
+        return view('admin.dashboard.home');
     }
 
     public function booking()
@@ -31,6 +30,7 @@ class AdminController extends Controller
     {
         return view('admin.payments.index');
     }
+
     public function paymentReceipt()
     {
         return view('admin.payments.receipt');
@@ -45,6 +45,7 @@ class AdminController extends Controller
     {
         return view('admin.package.index');
     }
+
     public function packageCreate()
     {
         return view('admin.package.create');

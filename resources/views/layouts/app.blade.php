@@ -1,45 +1,55 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<html lang="en">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Bangladesh Unbound - Dashboard')</title>
+    <link rel="icon" href="{{ asset('backend/img/logo.svg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('backend/img/logo.svg') }}" type="image/x-icon">
+    <meta name="application-name" content="@yield('meta_application_name', 'Bangladesh Unbound')">
+    <meta name="copyright" content="@yield('meta_copyright', 'Bangladesh Unbound')">
+    <meta name="language" content="@yield('meta_language', 'English')">
+    <meta name="author" content="@yield('meta_author', 'Bangladesh Unbound')">
+    <meta name="title" content="@yield('meta_title', 'default meta title')">
+    <meta name="description" content="@yield('meta_description', 'default description')">
+    <meta name="keywords" content="@yield('meta_keywords', 'some default keywords')">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap 5.3.2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    @vite(['resources/css/custom.css', 'resources/js/app.js'])
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    @stack('styles')
+</head>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+<body>
+    @include('layouts.partials.sidebar')
+    <!-- Main Content -->
+    <div class="main-content">
 
-        <!-- Styles -->
-        @livewireStyles
-    </head>
-    <body class="font-sans antialiased">
-        <x-banner />
+        @include('layouts.partials.header')
 
-        <div class="min-h-screen bg-gray-100">
-            @livewire('navigation-menu')
+        <div class="content-area">
 
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endif
+            @include('layouts.partials.session-alerts')
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+            @yield('breadcrumb')
+
+            @yield('content')
+
         </div>
+    </div>
 
-        @stack('modals')
+    <!-- Bootstrap 5.3.2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-        @livewireScripts
-    </body>
+    @stack('scripts')
+</body>
+
 </html>

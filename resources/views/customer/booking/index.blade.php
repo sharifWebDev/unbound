@@ -6,13 +6,13 @@
      <nav class="breadcrumb-container" aria-label="breadcrumb" class="mb-4">
          <ol class="breadcrumb">
              <li class="breadcrumb-item">
-                 <a href="{{route('admin.dashboard')}}">
-                     <img src="{{ asset('backend/img/ico/ico-dashboard.svg')}}" alt="Dashboard" class="breadcrumb-icon">
+                 <a href="{{ route('admin.dashboard') }}">
+                     <img src="{{ asset('backend/img/ico/ico-dashboard.svg') }}" alt="Dashboard" class="breadcrumb-icon">
                      Dashboard
                  </a>
              </li>
              <li class="breadcrumb-item active" aria-current="page">
-                 <img src="{{ asset('backend/img/ico/ico-bookings.svg')}}" alt="Bookings" class="breadcrumb-icon">
+                 <img src="{{ asset('backend/img/ico/ico-bookings.svg') }}" alt="Bookings" class="breadcrumb-icon">
                  All Bookings
              </li>
          </ol>
@@ -25,7 +25,7 @@
              <div class="col-md-4">
                  <div class="search-box">
                      <input type="text" class="form-control" id="searchBookings"
-                         placeholder="Search by Order ID, Tour Name, Customer...">
+                         placeholder="Search by Order ID, Tour Name, Guide...">
                      <i class="bi bi-search search-icon"></i>
                  </div>
              </div>
@@ -43,7 +43,6 @@
                      <option value="">All Payments</option>
                      <option value="paid">Fully Paid</option>
                      <option value="partial">Partially Paid</option>
-                     <option value="refunded">Refunded</option>
                  </select>
              </div>
              <div class="col-md-2">
@@ -51,7 +50,6 @@
                      <option value="10">10 per page</option>
                      <option value="25">25 per page</option>
                      <option value="50">50 per page</option>
-                     <option value="100">100 per page</option>
                  </select>
              </div>
              <div class="col-md-1">
@@ -71,7 +69,7 @@
      <div class="mb-4">
          <div class="mb-3 d-flex justify-content-between align-items-center">
              <h3 class="mb-0 section-title">
-                 <img src="{{ asset('backend/img/ico/ico-bookings.svg')}}" alt="Bookings" class="section-icon">
+                 <img src="{{ asset('backend/img/ico/ico-bookings.svg') }}" alt="Bookings" class="section-icon">
                  All Bookings
              </h3>
              <div class="results-info">
@@ -85,14 +83,12 @@
                      <tr>
                          <th>Order ID</th>
                          <th>Tour Name</th>
-                         <th width="190">Package Details</th>
+                         <th>Package Details</th>
                          <th>Tour Date</th>
                          <th>Status</th>
                          <th class="text-center">Payment</th>
-                         <th width="160">Assigned Team</th>
                          <th>Tour Guide</th>
-                         <th>Customer Details</th>
-                         <th width="150">Actions</th>
+                         <th>Actions</th>
                      </tr>
                  </thead>
                  <tbody>
@@ -102,15 +98,15 @@
                              <strong>#BK001</strong>
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package.svg')}}" alt="Tour" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package.svg') }}" alt="Tour" class="table-cell-icon">
                              Old Dhaka Tour
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package-details.svg')}}" alt="Package" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package-details.svg') }}" alt="Package" class="table-cell-icon">
                              2 Days, 1 Night
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-calendar.svg')}}" alt="Date" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-calendar.svg') }}" alt="Date" class="table-cell-icon">
                              02-03 May
                          </td>
                          <td>
@@ -122,11 +118,8 @@
                              </div>
                          </td>
                          <td>
-                             ABC Travels
-                         </td>
-                         <td>
                              <div class="guide-info">
-                                 <img src="{{ asset('backend/img/avatar.jpg')}}" alt="Guide" class="guide-avatar">
+                                 <img src="{{ asset('backend/img/avatar.jpg') }}" alt="Guide" class="guide-avatar">
                                  <div>
                                      <div class="fw-semibold">Rahman Ahmed</div>
                                      <small class="text-muted">+880 1721005678</small>
@@ -134,17 +127,8 @@
                              </div>
                          </td>
                          <td>
-                             <div class="guide-info">
-                                 <img src="{{ asset('backend/img/avatar.jpg')}}" alt="Guide" class="guide-avatar">
-                                 <div>
-                                     <div class="fw-semibold">Aziz Ahmed</div>
-                                     <small class="text-muted">USA</small>
-                                 </div>
-                             </div>
-                         </td>
-                         <td>
                              <button class="btn btn-view-details">
-                                 Details <img src="{{ asset('backend/img/ico/ico-map.svg')}}" alt="">
+                                 Details <img src="{{ asset('backend/img/ico/ico-map.svg') }}" alt="">
                              </button>
                          </td>
                      </tr>
@@ -155,15 +139,15 @@
                              <strong>#BK002</strong>
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package.svg')}}" alt="Tour" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package.svg') }}" alt="Tour" class="table-cell-icon">
                              Sundarbans Adventure
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package-details.svg')}}" alt="Package" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package-details.svg') }}" alt="Package" class="table-cell-icon">
                              3 Days, 2 Nights
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-calendar.svg')}}" alt="Date" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-calendar.svg') }}" alt="Date" class="table-cell-icon">
                              15-17 May
                          </td>
                          <td>
@@ -173,14 +157,14 @@
                              <div class="payment-info">
                                  <div class="payment-paid">$800 Paid</div>
                                  <div class="payment-due">$1,200 Due</div>
+                                 <button class="mt-2 btn btn-pay-now">
+                                     Pay Now <img src="{{ asset('backend/img/ico/ico-cart.svg') }}" alt="">
+                                 </button>
                              </div>
                          </td>
                          <td>
-                             ABC Travels
-                         </td>
-                         <td>
                              <div class="guide-info">
-                                 <img src="{{ asset('backend/img/avatar.jpg')}}" alt="Guide" class="guide-avatar">
+                                 <img src="{{ asset('backend/img/avatar.jpg') }}" alt="Guide" class="guide-avatar">
                                  <div>
                                      <div class="fw-semibold">Rahman Ahmed</div>
                                      <small class="text-muted">+880 1721005678</small>
@@ -188,17 +172,8 @@
                              </div>
                          </td>
                          <td>
-                             <div class="guide-info">
-                                 <img src="{{ asset('backend/img/avatar.jpg')}}" alt="Guide" class="guide-avatar">
-                                 <div>
-                                     <div class="fw-semibold">Aziz Ahmed</div>
-                                     <small class="text-muted">USA</small>
-                                 </div>
-                             </div>
-                         </td>
-                         <td>
                              <button class="btn btn-view-details">
-                                 Details <img src="{{ asset('backend/img/ico/ico-map.svg')}}" alt="">
+                                 Details <img src="{{ asset('backend/img/ico/ico-map.svg') }}" alt="">
                              </button>
                          </td>
                      </tr>
@@ -209,15 +184,15 @@
                              <strong>#BK003</strong>
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package.svg')}}" alt="Tour" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package.svg') }}" alt="Tour" class="table-cell-icon">
                              Cox's Bazar Beach
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package-details.svg')}}" alt="Package" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package-details.svg') }}" alt="Package" class="table-cell-icon">
                              4 Days, 3 Nights
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-calendar.svg')}}" alt="Date" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-calendar.svg') }}" alt="Date" class="table-cell-icon">
                              25-28 May
                          </td>
                          <td>
@@ -227,14 +202,14 @@
                              <div class="payment-info">
                                  <div class="payment-paid">$1,500 Paid</div>
                                  <div class="payment-due">$500 Due</div>
+                                 <button class="mt-2 btn btn-pay-now">
+                                     Pay Now <img src="{{ asset('backend/img/ico/ico-cart.svg') }}" alt="">
+                                 </button>
                              </div>
                          </td>
                          <td>
-                             ABC Travels
-                         </td>
-                         <td>
                              <div class="guide-info">
-                                 <img src="{{ asset('backend/img/avatar.jpg')}}" alt="Guide" class="guide-avatar">
+                                 <img src="{{ asset('backend/img/avatar.jpg') }}" alt="Guide" class="guide-avatar">
                                  <div>
                                      <div class="fw-semibold">Sarah Khan</div>
                                      <small class="text-muted">+880 1721005679</small>
@@ -242,17 +217,8 @@
                              </div>
                          </td>
                          <td>
-                             <div class="guide-info">
-                                 <img src="{{ asset('backend/img/avatar.jpg')}}" alt="Guide" class="guide-avatar">
-                                 <div>
-                                     <div class="fw-semibold">Aziz Ahmed</div>
-                                     <small class="text-muted">USA</small>
-                                 </div>
-                             </div>
-                         </td>
-                         <td>
                              <button class="btn btn-view-details">
-                                 Details <img src="{{ asset('backend/img/ico/ico-map.svg')}}" alt="">
+                                 Details <img src="{{ asset('backend/img/ico/ico-map.svg') }}" alt="">
                              </button>
                          </td>
                      </tr>
@@ -263,15 +229,15 @@
                              <strong>#BK004</strong>
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package.svg')}}" alt="Tour" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package.svg') }}" alt="Tour" class="table-cell-icon">
                              Sylhet Tea Gardens
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package-details.svg')}}" alt="Package" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package-details.svg') }}" alt="Package" class="table-cell-icon">
                              2 Days, 1 Night
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-calendar.svg')}}" alt="Date" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-calendar.svg') }}" alt="Date" class="table-cell-icon">
                              20-21 Apr
                          </td>
                          <td>
@@ -283,11 +249,8 @@
                              </div>
                          </td>
                          <td>
-                             ABC Travels
-                         </td>
-                         <td>
                              <div class="guide-info">
-                                 <img src="{{ asset('backend/img/avatar.jpg')}}" alt="Guide" class="guide-avatar">
+                                 <img src="{{ asset('backend/img/avatar.jpg') }}" alt="Guide" class="guide-avatar">
                                  <div>
                                      <div class="fw-semibold">Ahmed Hassan</div>
                                      <small class="text-muted">+880 1721005680</small>
@@ -295,17 +258,8 @@
                              </div>
                          </td>
                          <td>
-                             <div class="guide-info">
-                                 <img src="{{ asset('backend/img/avatar.jpg')}}" alt="Guide" class="guide-avatar">
-                                 <div>
-                                     <div class="fw-semibold">Aziz Ahmed</div>
-                                     <small class="text-muted">USA</small>
-                                 </div>
-                             </div>
-                         </td>
-                         <td>
                              <button class="btn btn-view-details">
-                                 Details <img src="{{ asset('backend/img/ico/ico-map.svg')}}" alt="">
+                                 Details <img src="{{ asset('backend/img/ico/ico-map.svg') }}" alt="">
                              </button>
                          </td>
                      </tr>
@@ -316,15 +270,15 @@
                              <strong>#BK005</strong>
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package.svg')}}" alt="Tour" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package.svg') }}" alt="Tour" class="table-cell-icon">
                              Chittagong Hill Tracts
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-package-details.svg')}}" alt="Package" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-package-details.svg') }}" alt="Package" class="table-cell-icon">
                              5 Days, 4 Nights
                          </td>
                          <td>
-                             <img src="{{ asset('backend/img/ico/ico-calendar.svg')}}" alt="Date" class="table-cell-icon">
+                             <img src="{{ asset('backend/img/ico/ico-calendar.svg') }}" alt="Date" class="table-cell-icon">
                              10-14 Jun
                          </td>
                          <td>
@@ -386,6 +340,7 @@
              const statusFilter = document.getElementById('statusFilter');
              const paymentFilter = document.getElementById('paymentFilter');
              const entriesPerPage = document.getElementById('entriesPerPage');
+             const searchButton = document.getElementById('searchButton');
              const clearFilters = document.getElementById('clearFilters');
              const tableRows = document.querySelectorAll('tbody tr');
 
@@ -402,8 +357,8 @@
                  filteredRows = Array.from(tableRows).filter(row => {
                      const orderID = row.querySelector('td:first-child').textContent.toLowerCase();
                      const tourName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                     const customerName = row.querySelector('td:nth-child(9) .fw-semibold').textContent
-                         .toLowerCase();
+                     const guideName = row.querySelector('td:nth-child(7) .fw-semibold')?.textContent
+                         .toLowerCase() || '';
                      const status = row.querySelector('.badge').textContent.toLowerCase();
                      const paymentInfo = row.querySelector('.payment-info').textContent.toLowerCase();
 
@@ -411,7 +366,7 @@
                      const matchesSearch = !searchTerm ||
                          orderID.includes(searchTerm) ||
                          tourName.includes(searchTerm) ||
-                         customerName.includes(searchTerm);
+                         guideName.includes(searchTerm);
 
                      // Status filter
                      const matchesStatus = !statusValue || status.includes(statusValue);
@@ -423,8 +378,6 @@
                              matchesPayment = paymentInfo.includes('paid') && !paymentInfo.includes('due');
                          } else if (paymentValue === 'partial') {
                              matchesPayment = paymentInfo.includes('due');
-                         } else if (paymentValue === 'refunded') {
-                             matchesPayment = paymentInfo.includes('refunded');
                          }
                      }
 
@@ -482,39 +435,11 @@
                  const startPage = Math.max(1, currentPage - 2);
                  const endPage = Math.min(totalPages, currentPage + 2);
 
-                 if (startPage > 1) {
-                     const firstLi = document.createElement('li');
-                     firstLi.className = 'page-item';
-                     firstLi.innerHTML = `<a class="page-link" href="#" data-page="1">1</a>`;
-                     paginationControls.appendChild(firstLi);
-
-                     if (startPage > 2) {
-                         const dotsLi = document.createElement('li');
-                         dotsLi.className = 'page-item disabled';
-                         dotsLi.innerHTML = `<span class="page-link">...</span>`;
-                         paginationControls.appendChild(dotsLi);
-                     }
-                 }
-
                  for (let i = startPage; i <= endPage; i++) {
                      const pageLi = document.createElement('li');
                      pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
                      pageLi.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
                      paginationControls.appendChild(pageLi);
-                 }
-
-                 if (endPage < totalPages) {
-                     if (endPage < totalPages - 1) {
-                         const dotsLi = document.createElement('li');
-                         dotsLi.className = 'page-item disabled';
-                         dotsLi.innerHTML = `<span class="page-link">...</span>`;
-                         paginationControls.appendChild(dotsLi);
-                     }
-
-                     const lastLi = document.createElement('li');
-                     lastLi.className = 'page-item';
-                     lastLi.innerHTML = `<a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a>`;
-                     paginationControls.appendChild(lastLi);
                  }
 
                  // Next button
@@ -560,10 +485,7 @@
                  updatePagination();
              });
 
-             // Search button event listener
-             document.getElementById('searchButton').addEventListener('click', function() {
-                 performSearch();
-             });
+             searchButton.addEventListener('click', performSearch);
 
              clearFilters.addEventListener('click', function() {
                  searchInput.value = '';
