@@ -60,14 +60,4 @@ class AdminDashboardController extends Controller
     {
         return view('admin.profile.index');
     }
-
-    public function login()
-    {
-        return view('admin.login');
-    }
-
-    public function register()
-    {
-        return view('admin.register');
-    }
 }

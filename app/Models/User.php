@@ -19,16 +19,23 @@ class User extends Authenticatable implements MustVerifyEmail
     public $incrementing = false;
 
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
+        'phone',
+        'address',
+        'country',
         'role',
-        'is_active',
         'otp',
         'otp_expires_at',
         'last_login_at',
         'last_login_ip',
+        'terms_accepted_at',
+        'subscribe_newsletter',
+        'is_active',
     ];
+
 
     protected $hidden = [
         'password',
@@ -60,7 +67,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isAdmin(): bool
     {
-        return in_array($this->role, ['super_admin', 'admin']);
+        return in_array($this->role, ['super_admin', 'admin', 'team_guide']);
     }
 
     public function scopeActive($query)

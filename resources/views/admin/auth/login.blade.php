@@ -20,7 +20,9 @@
                 </div>
 
                 <!-- Login Form -->
-                <form class="login-form" action="dashboard" method="POST">
+                <form class="login-form" method="POST" action="{{ route('login') }}">
+                    @csrf
+                    @method('POST')
                     <div class="form-group">
                         <label for="email" class="form-label">
                             <img src="{{ asset('backend/img/ico/ico-profile.svg')}}" alt="Email" class="form-icon">
@@ -114,7 +116,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="signUpForm">
+                    <form id="signUpForm" action="{{ route('register') }}" method="POST">
+                        @csrf
+                        @method('POST')
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3 form-group">
@@ -534,10 +538,38 @@
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing In...';
                 submitBtn.disabled = true;
 
-                // Simulate login process
-                setTimeout(() => {
-                    window.location.href = 'dashboard';
-                }, 1500);
+                //ajax call
+
+                const formData = new FormData(form);
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('Login successful!');
+                        window.location.href = 'dashboard';
+                    } else {
+                        alert('Login failed: ' + data.message);
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while logging in. Please try again later.');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
             });
 
             // Sign Up Form Handling
@@ -561,14 +593,38 @@
                     submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating Account...';
                     submitBtn.disabled = true;
 
-                    // Simulate account creation
-                    setTimeout(() => {
-                        alert('Account created successfully! Please check your email to verify your account.');
-                        bootstrap.Modal.getInstance(document.getElementById('signUpModal')).hide();
-                        signUpForm.reset();
+                    //ajax signup sending
+                    const formData = new FormData(signUpForm);
+                    fetch(signUpForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert('Account created successfully! Please check your email to verify your account.');
+                            bootstrap.Modal.getInstance(document.getElementById('signUpModal')).hide();
+                            signUpForm.reset();
+                        } else {
+                            alert('Account creation failed: ' + data.message);
+                        }
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
-                    }, 2000);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while creating your account. Please try again later.');
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    });
                 });
             }
 

@@ -40,14 +40,4 @@ class CustomerDashboardController extends Controller
     {
         return view('customer.profile.index');
     }
-
-    public function login()
-    {
-        return view('customer.login');
-    }
-
-    public function register()
-    {
-        return view('customer.register');
-    }
 }

@@ -28,24 +28,25 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/web.php'));
 
             // Admin routes
-            Route::middleware(['web', 'auth:web', 'verified'])
-                ->prefix('admin')
-                ->name('admin.')
-                ->group(base_path('routes/admin.php'));
+            Route::middleware(['web'])
+                ->prefix('customer')
+                ->name('customer.')
+                ->group(base_path('routes/customer.php'));
 
             // API routes
             Route::middleware(['api', 'auth:sanctum'])
                 ->prefix('api')
                 ->name('api.')
                 ->group(base_path('routes/api.php'));
-
-            // Console/command routes if any (optional)
-            // Route::middleware('console')->group(base_path('routes/console.php'));
         });
     }
 
     protected function configureRateLimiting(): void
     {
+       RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+
         RateLimiter::for('admin-auth', function (Request $request) {
             return Limit::perMinute(5)->by($request->ip());
         });

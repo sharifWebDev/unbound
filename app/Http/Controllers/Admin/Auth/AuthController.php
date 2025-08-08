@@ -2,41 +2,54 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Auth\LoginRequest;
-use App\Http\Requests\Admin\Auth\RegisterRequest;
 use App\Models\User;
-use App\Notifications\Admin\SendOtpNotification;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Auth\Events\Registered;
+use App\Http\Requests\Admin\Auth\LoginRequest;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response;
+use App\Notifications\Admin\SendOtpNotification;
+use App\Http\Requests\Admin\Auth\RegisterRequest;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request): JsonResponse
+    public function showRegistrationForm(): View
+    {
+        return view('admin.auth.login');
+    }
+
+    public function register(RegisterRequest $request): JsonResponse|RedirectResponse
     {
         try {
             $validated = $request->validated();
 
+            $fullName = trim($validated['firstName'] . ' ' . $validated['lastName']);
+
             $user = User::create([
-                'name' => $validated['name'],
+                'name' => $fullName,
                 'email' => $validated['email'],
+                'phone' => $validated['phone'],
+                'address' => $validated['address'],
+                'country' => $validated['country'],
                 'password' => Hash::make($validated['password']),
                 'role' => 'admin',
                 'is_active' => true,
+                'subscribe_newsletter' => $validated['subscribeNewsletter'],
+                'ip_address' => $validated['ip_address'],
             ]);
 
             // Generate OTP
             $otp = $this->generateOtp();
             $user->update([
                 'otp' => $otp,
-                'otp_expires_at' => Carbon::now()->addMinutes(config('auth.otp_expiry')),
+                'otp_expires_at' => Carbon::now()->addMinutes(config('auth.otp_expiry', 10)),
             ]);
 
             // Send OTP notification
@@ -45,28 +58,35 @@ class AuthController extends Controller
             event(new Registered($user));
 
             return response()->json([
+                'status' => 'success',
                 'message' => 'Registration successful. Please verify your email.',
-                'data' => [
-                    'email' => $user->email,
-                ],
-            ], Response::HTTP_CREATED);
+                'email' => $user->email,
+            ], 201);
 
+            // return redirect()->route('admin.verify.otp.form')
+            //     ->with('email', $user->email)
+            //     ->with('status', 'Registration successful. Please verify your email.');
         } catch (\Exception $e) {
-            Log::error('Admin registration error: '.$e->getMessage());
-
+            Log::error('Admin registration error: ' . $e->getMessage());
             return response()->json([
+                'status' => 'error',
                 'message' => 'An error occurred during registration.',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            ], 500);
         }
     }
 
-    public function login(LoginRequest $request): JsonResponse
+    public function showLoginForm(): View
+    {
+        return view('admin.auth.login');
+    }
+
+    public function login(LoginRequest $request): RedirectResponse
     {
         try {
             $credentials = $request->only('email', 'password');
             $remember = $request->boolean('remember');
 
-            if (! Auth::guard('admin')->attempt($credentials, $remember)) {
+            if (!Auth::guard('admin')->attempt($credentials, $remember)) {
                 throw ValidationException::withMessages([
                     'email' => [trans('auth.failed')],
                 ]);
@@ -74,43 +94,38 @@ class AuthController extends Controller
 
             $user = Auth::guard('admin')->user();
 
-            if (! $user->is_active) {
+            if (!$user->is_active) {
                 Auth::guard('admin')->logout();
                 throw ValidationException::withMessages([
                     'email' => [trans('auth.inactive')],
                 ]);
             }
 
-            if (! $user->hasAnyRole(['super_admin', 'admin'])) {
+            if (!$user->hasAnyRole(['super_admin', 'admin'])) {
                 Auth::guard('admin')->logout();
                 throw ValidationException::withMessages([
                     'email' => [trans('auth.unauthorized')],
                 ]);
             }
 
-            $user->logLoginAttempt($request->ip());
+            // Optional: Log login attempt
+            if (method_exists($user, 'logLoginAttempt')) {
+                $user->logLoginAttempt($request->ip());
+            }
 
             $request->session()->regenerate();
 
-            return response()->json([
-                'message' => 'Login successful',
-                'data' => [
-                    'user' => $user->only(['id', 'name', 'email', 'role']),
-                ],
-            ]);
-
+            return redirect()->intended(route('admin.dashboard'));
         } catch (ValidationException $e) {
-            throw $e;
+            return back()->withErrors($e->errors());
         } catch (\Exception $e) {
-            Log::error('Admin login error: '.$e->getMessage());
-
-            return response()->json([
-                'message' => 'An error occurred during login.',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            Log::error('Admin login error: ' . $e->getMessage());
+            return back()->with('error', 'An unexpected error occurred. Please try again.');
         }
     }
 
-    public function logout(Request $request): JsonResponse
+
+    public function logout(Request $request): RedirectResponse
     {
         try {
             Auth::guard('admin')->logout();
@@ -118,35 +133,34 @@ class AuthController extends Controller
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return response()->json([
-                'message' => 'Logout successful',
-            ]);
-
+            return redirect()->route('admin.login');
         } catch (\Exception $e) {
-            Log::error('Admin logout error: '.$e->getMessage());
-
-            return response()->json([
-                'message' => 'An error occurred during logout.',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            Log::error('Admin logout error: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred during logout.');
         }
     }
 
-    public function verifyOtp(Request $request): JsonResponse
+    public function showOtpVerificationForm(): View
     {
-        $request->validate([
+        return view('admin.auth.verify-otp', [
+            'email' => session('email')
+        ]);
+    }
+
+    public function verifyOtp(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
             'email' => 'required|email|exists:users,email',
             'otp' => 'required|string|size:6',
         ]);
 
-        $user = User::where('email', $request->email)
-            ->where('otp', $request->otp)
+        $user = User::where('email', $validated['email'])
+            ->where('otp', $validated['otp'])
             ->where('otp_expires_at', '>', now())
             ->first();
 
-        if (! $user) {
-            return response()->json([
-                'message' => 'Invalid or expired OTP',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        if (!$user) {
+            return back()->withErrors(['otp' => 'Invalid or expired OTP']);
         }
 
         $user->update([
@@ -155,9 +169,29 @@ class AuthController extends Controller
             'email_verified_at' => now(),
         ]);
 
-        return response()->json([
-            'message' => 'OTP verified successfully',
+        Auth::guard('admin')->login($user);
+
+        return redirect()->route('admin.dashboard')
+            ->with('status', 'OTP verified successfully');
+    }
+
+    public function resendOtp(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|exists:users,email',
         ]);
+
+        $user = User::where('email', $validated['email'])->first();
+
+        $otp = $this->generateOtp();
+        $user->update([
+            'otp' => $otp,
+            'otp_expires_at' => Carbon::now()->addMinutes(config('auth.otp_expiry')),
+        ]);
+
+        $user->notify(new SendOtpNotification($otp));
+
+        return back()->with('status', 'A new OTP has been sent to your email.');
     }
 
     protected function generateOtp(): string

@@ -10,15 +10,20 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
+            $table->string('first_name');
+            $table->string('last_name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('phone')->nullable();
+            $table->string('address')->nullable();
+            $table->string('country')->nullable();
             $table->string('otp')->nullable();
             $table->timestamp('otp_expires_at')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
             $table->timestamp('last_login_at')->nullable();
             $table->ipAddress('last_login_ip')->nullable();
+            $table->boolean('subscribe_newsletter')->default(false);
+            $table->timestamp('terms_accepted_at')->nullable();
             $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();

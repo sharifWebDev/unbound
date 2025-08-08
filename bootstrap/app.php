@@ -6,14 +6,28 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // 'admin' => \App\Http\Middleware\EnsureIsAdmin::class,
-        // 'customer' => \App\Http\Middleware\RedirectIfNotCustomer::class,
+        // Global middleware (optional)
+        // $middleware->append(\App\Http\Middleware\YourGlobalMiddleware::class);
+
+        // Middleware groups (optional)
+        // $middleware->group('web', [
+        //     \App\Http\Middleware\EncryptCookies::class,
+        // ]);
+        $middleware->api(prepend: [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        ]);
+
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\EnsureIsAdmin::class,
+            'customer' => \App\Http\Middleware\RedirectIfNotCustomer::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->create();
