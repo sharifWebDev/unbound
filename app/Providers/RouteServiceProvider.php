@@ -10,49 +10,31 @@ use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    public const HOME = '/admin';
-
+    public const HOME = '/admin/dashboard';
     public const ADMIN = '/admin/dashboard';
+    public const CUSTOMER_HOME = '/customer/dashboard';
 
     public function boot(): void
     {
-        // API Rate limiting
+        // API rate limiting
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
 
-        // Register all route groups
         $this->routes(function () {
-            // Web routes
+
+            Route::prefix('customer')
+                ->as('customer.')
+                ->middleware('web')
+                ->group(base_path('routes/customer.php'));
+
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
 
-            // customer routes
-            Route::middleware(['web', 'auth:customer', 'verified'])
-                ->prefix('customer')
-                ->name('customer.')
-                ->group(base_path('routes/customer.php'));
-
-            // API routes
-            Route::middleware(['api', 'auth:sanctum'])
-                ->prefix('api')
-                ->name('api.')
+            Route::prefix('api')
+                ->as('api.')
+                ->middleware('api')
                 ->group(base_path('routes/api.php'));
-        });
-    }
-
-    protected function configureRateLimiting(): void
-    {
-       RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        });
-
-        RateLimiter::for('web-auth', function (Request $request) {
-            return Limit::perMinute(5)->by($request->ip());
-        });
-
-        RateLimiter::for('customer-auth', function (Request $request) {
-            return Limit::perMinute(10)->by($request->ip());
         });
     }
 }

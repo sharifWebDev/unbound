@@ -505,168 +505,168 @@
             }
         }
 
-        // Form validation and animation
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('.login-form');
-            const inputs = document.querySelectorAll('.login-input');
+        // // Form validation and animation
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const form = document.querySelector('.login-form');
+        //     const inputs = document.querySelectorAll('.login-input');
 
-            // Add focus animations
-            inputs.forEach(input => {
-                input.addEventListener('focus', function() {
-                    this.parentElement.classList.add('focused');
-                });
+        //     // Add focus animations
+        //     inputs.forEach(input => {
+        //         input.addEventListener('focus', function() {
+        //             this.parentElement.classList.add('focused');
+        //         });
 
-                input.addEventListener('blur', function() {
-                    if (this.value === '') {
-                        this.parentElement.classList.remove('focused');
-                    }
-                });
+        //         input.addEventListener('blur', function() {
+        //             if (this.value === '') {
+        //                 this.parentElement.classList.remove('focused');
+        //             }
+        //         });
 
-                // Check if input has value on load
-                if (input.value !== '') {
-                    input.parentElement.classList.add('focused');
-                }
-            });
+        //         // Check if input has value on load
+        //         if (input.value !== '') {
+        //             input.parentElement.classList.add('focused');
+        //         }
+        //     });
 
-            // Form submission
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
+        //     // Form submission
+        //     form.addEventListener('submit', function(e) {
+        //         e.preventDefault();
 
-                // Add loading state
-                const submitBtn = document.querySelector('.btn-login');
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing In...';
-                submitBtn.disabled = true;
+        //         // Add loading state
+        //         const submitBtn = document.querySelector('.btn-login');
+        //         const originalText = submitBtn.innerHTML;
+        //         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing In...';
+        //         submitBtn.disabled = true;
 
-                //ajax call
+        //         //ajax call
 
-                const formData = new FormData(form);
-                fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        alert('Login successful!');
-                        window.location.href = 'dashboard';
-                    } else {
-                        alert('Login failed: ' + data.message);
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while logging in. Please try again later.');
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                });
-            });
+        //         const formData = new FormData(form);
+        //         fetch(form.action, {
+        //             method: 'POST',
+        //             body: formData,
+        //             headers: {
+        //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        //             }
+        //         })
+        //         .then(response => {
+        //             if (!response.ok) {
+        //                 throw new Error('Network response was not ok');
+        //             }
+        //             return response.json();
+        //         })
+        //         .then(data => {
+        //             if (data.success) {
+        //                 alert('Login successful!');
+        //                 window.location.href = 'dashboard';
+        //             } else {
+        //                 alert('Login failed: ' + data.message);
+        //                 submitBtn.innerHTML = originalText;
+        //                 submitBtn.disabled = false;
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //             alert('An error occurred while logging in. Please try again later.');
+        //             submitBtn.innerHTML = originalText;
+        //             submitBtn.disabled = false;
+        //         });
+        //     });
 
-            // Sign Up Form Handling
-            const signUpForm = document.getElementById('signUpForm');
-            if (signUpForm) {
-                signUpForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
+        //     // Sign Up Form Handling
+        //     const signUpForm = document.getElementById('signUpForm');
+        //     if (signUpForm) {
+        //         signUpForm.addEventListener('submit', function(e) {
+        //             e.preventDefault();
 
-                    // Validate passwords match
-                    const password = document.getElementById('signUpPassword').value;
-                    const confirmPassword = document.getElementById('signUpConfirmPassword').value;
+        //             // Validate passwords match
+        //             const password = document.getElementById('signUpPassword').value;
+        //             const confirmPassword = document.getElementById('signUpConfirmPassword').value;
 
-                    if (password !== confirmPassword) {
-                        alert('Passwords do not match!');
-                        return;
-                    }
+        //             if (password !== confirmPassword) {
+        //                 alert('Passwords do not match!');
+        //                 return;
+        //             }
 
-                    // Add loading state
-                    const submitBtn = document.querySelector('#signUpModal .btn-success');
-                    const originalText = submitBtn.innerHTML;
-                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating Account...';
-                    submitBtn.disabled = true;
+        //             // Add loading state
+        //             const submitBtn = document.querySelector('#signUpModal .btn-success');
+        //             const originalText = submitBtn.innerHTML;
+        //             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating Account...';
+        //             submitBtn.disabled = true;
 
-                    //ajax signup sending
-                    const formData = new FormData(signUpForm);
-                    fetch(signUpForm.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            alert('Account created successfully! Please check your email to verify your account.');
-                            bootstrap.Modal.getInstance(document.getElementById('signUpModal')).hide();
-                            signUpForm.reset();
-                        } else {
-                            alert('Account creation failed: ' + data.message);
-                        }
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while creating your account. Please try again later.');
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    });
-                });
-            }
+        //             //ajax signup sending
+        //             const formData = new FormData(signUpForm);
+        //             fetch(signUpForm.action, {
+        //                 method: 'POST',
+        //                 body: formData,
+        //                 headers: {
+        //                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        //                 }
+        //             })
+        //             .then(response => {
+        //                 if (!response.ok) {
+        //                     throw new Error('Network response was not ok');
+        //                 }
+        //                 return response.json();
+        //             })
+        //             .then(data => {
+        //                 if (data.success) {
+        //                     alert('Account created successfully! Please check your email to verify your account.');
+        //                     bootstrap.Modal.getInstance(document.getElementById('signUpModal')).hide();
+        //                     signUpForm.reset();
+        //                 } else {
+        //                     alert('Account creation failed: ' + data.message);
+        //                 }
+        //                 submitBtn.innerHTML = originalText;
+        //                 submitBtn.disabled = false;
+        //             })
+        //             .catch(error => {
+        //                 console.error('Error:', error);
+        //                 alert('An error occurred while creating your account. Please try again later.');
+        //                 submitBtn.innerHTML = originalText;
+        //                 submitBtn.disabled = false;
+        //             });
+        //         });
+        //     }
 
-            // Forgot Password Form Handling
-            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-            if (forgotPasswordForm) {
-                forgotPasswordForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
+        //     // Forgot Password Form Handling
+        //     const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+        //     if (forgotPasswordForm) {
+        //         forgotPasswordForm.addEventListener('submit', function(e) {
+        //             e.preventDefault();
 
-                    const email = document.getElementById('forgotEmail').value;
-                    if (!email) {
-                        alert('Please enter your email address.');
-                        return;
-                    }
+        //             const email = document.getElementById('forgotEmail').value;
+        //             if (!email) {
+        //                 alert('Please enter your email address.');
+        //                 return;
+        //             }
 
-                    // Add loading state
-                    const submitBtn = document.getElementById('sendResetBtn');
-                    const originalText = submitBtn.innerHTML;
-                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
-                    submitBtn.disabled = true;
+        //             // Add loading state
+        //             const submitBtn = document.getElementById('sendResetBtn');
+        //             const originalText = submitBtn.innerHTML;
+        //             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
+        //             submitBtn.disabled = true;
 
-                    // Simulate sending reset email
-                    setTimeout(() => {
-                        document.getElementById('forgotPasswordStep1').style.display = 'none';
-                        document.getElementById('forgotPasswordStep2').style.display = 'block';
-                        submitBtn.style.display = 'none';
-                    }, 1500);
-                });
-            }
+        //             // Simulate sending reset email
+        //             setTimeout(() => {
+        //                 document.getElementById('forgotPasswordStep1').style.display = 'none';
+        //                 document.getElementById('forgotPasswordStep2').style.display = 'block';
+        //                 submitBtn.style.display = 'none';
+        //             }, 1500);
+        //         });
+        //     }
 
-            // Reset forgot password modal when closed
-            const forgotPasswordModal = document.getElementById('forgotPasswordModal');
-            if (forgotPasswordModal) {
-                forgotPasswordModal.addEventListener('hidden.bs.modal', function() {
-                    document.getElementById('forgotPasswordStep1').style.display = 'block';
-                    document.getElementById('forgotPasswordStep2').style.display = 'none';
-                    document.getElementById('sendResetBtn').style.display = 'inline-block';
-                    document.getElementById('sendResetBtn').disabled = false;
-                    document.getElementById('sendResetBtn').innerHTML = '<i class="bi bi-send me-2"></i>Send Reset Link';
-                    forgotPasswordForm.reset();
-                });
-            }
-        });
+        //     // Reset forgot password modal when closed
+        //     const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+        //     if (forgotPasswordModal) {
+        //         forgotPasswordModal.addEventListener('hidden.bs.modal', function() {
+        //             document.getElementById('forgotPasswordStep1').style.display = 'block';
+        //             document.getElementById('forgotPasswordStep2').style.display = 'none';
+        //             document.getElementById('sendResetBtn').style.display = 'inline-block';
+        //             document.getElementById('sendResetBtn').disabled = false;
+        //             document.getElementById('sendResetBtn').innerHTML = '<i class="bi bi-send me-2"></i>Send Reset Link';
+        //             forgotPasswordForm.reset();
+        //         });
+        //     }
+        // });
     </script>
 @endpush

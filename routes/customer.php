@@ -7,7 +7,7 @@ use App\Http\Controllers\Customer\CustomerDashboardController;
 
 
 // Guest routes
-Route::middleware('guest:customer')->group(function () {
+Route::middleware('customer.guest:customer')->group(function () {
     Route::get('register',  [AuthController::class, 'showRegistrationForm'])->name('register');
     Route::post('register', [AuthController::class, 'register']);
 

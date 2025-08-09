@@ -78,6 +78,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): RedirectResponse|JsonResponse
     {
+        dd($request->all());
         try {
             $credentials = $request->only('email', 'password');
             $remember = $request->boolean('remember');

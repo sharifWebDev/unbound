@@ -11,20 +11,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Global middleware (optional)
-        // $middleware->append(\App\Http\Middleware\YourGlobalMiddleware::class);
 
-        // Middleware groups (optional)
-        // $middleware->group('web', [
-        //     \App\Http\Middleware\EncryptCookies::class,
-        // ]);
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
 
         $middleware->alias([
-            'admin' => \App\Http\Middleware\Authenticate::class,
-            'customer' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'admin.auth' => \App\Http\Middleware\Authenticate::class,
+            'customer.auth' => \App\Http\Middleware\Authenticate::class,
+            'admin.guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'customer.guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

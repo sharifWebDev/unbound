@@ -10,15 +10,11 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
-            'hash' => false,
-            'expire' => 1440, // 24 hours
         ],
 
         'customer' => [
             'driver' => 'session',
             'provider' => 'customers',
-            'hash' => false,
-            'expire' => 1440,
         ],
 
         'api' => [
@@ -30,14 +26,12 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
-            'table' => 'users',
+            'model' => App\Models\User::class, 
         ],
 
         'customers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Customer::class,
-            'table' => 'customers',
         ],
     ],
 
@@ -57,5 +51,5 @@ return [
         ],
     ],
 
-    'password_timeout' => 10800, // 3 hours
+    'password_timeout' => 10800,
 ];
