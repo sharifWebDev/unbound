@@ -22,7 +22,8 @@ class AuthController extends Controller
 {
     public function showRegistrationForm(): View
     {
-        return view('admin.auth.login');
+        // Return registration form view (make sure this exists)
+        return view('admin.auth.register');
     }
 
     public function register(RegisterRequest $request): JsonResponse|RedirectResponse
@@ -30,19 +31,18 @@ class AuthController extends Controller
         try {
             $validated = $request->validated();
 
-            $fullName = trim($validated['firstName'] . ' ' . $validated['lastName']);
-
             $user = User::create([
-                'name' => $fullName,
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
                 'email' => $validated['email'],
-                'phone' => $validated['phone'],
-                'address' => $validated['address'],
-                'country' => $validated['country'],
+                'phone' => $validated['phone'] ?? null,
+                'address' => $validated['address'] ?? null,
+                'country' => $validated['country'] ?? null,
                 'password' => Hash::make($validated['password']),
                 'role' => 'admin',
                 'is_active' => true,
-                'subscribe_newsletter' => $validated['subscribeNewsletter'],
-                'ip_address' => $validated['ip_address'],
+                'subscribe_newsletter' => $validated['subscribe_newsletter'] ?? false,
+                'terms_accepted_at' => Carbon::now(),
             ]);
 
             // Generate OTP
@@ -62,10 +62,6 @@ class AuthController extends Controller
                 'message' => 'Registration successful. Please verify your email.',
                 'email' => $user->email,
             ], 201);
-
-            // return redirect()->route('admin.verify.otp.form')
-            //     ->with('email', $user->email)
-            //     ->with('status', 'Registration successful. Please verify your email.');
         } catch (\Exception $e) {
             Log::error('Admin registration error: ' . $e->getMessage());
             return response()->json([
@@ -80,29 +76,29 @@ class AuthController extends Controller
         return view('admin.auth.login');
     }
 
-    public function login(LoginRequest $request): RedirectResponse
+    public function login(LoginRequest $request): RedirectResponse|JsonResponse
     {
         try {
             $credentials = $request->only('email', 'password');
             $remember = $request->boolean('remember');
 
-            if (!Auth::guard('admin')->attempt($credentials, $remember)) {
+            if (!Auth::guard('web')->attempt($credentials, $remember)) {
                 throw ValidationException::withMessages([
                     'email' => [trans('auth.failed')],
                 ]);
             }
 
-            $user = Auth::guard('admin')->user();
+            $user = Auth::guard('web')->user();
 
             if (!$user->is_active) {
-                Auth::guard('admin')->logout();
+                Auth::guard('web')->logout();
                 throw ValidationException::withMessages([
                     'email' => [trans('auth.inactive')],
                 ]);
             }
 
             if (!$user->hasAnyRole(['super_admin', 'admin'])) {
-                Auth::guard('admin')->logout();
+                Auth::guard('web')->logout();
                 throw ValidationException::withMessages([
                     'email' => [trans('auth.unauthorized')],
                 ]);
@@ -115,20 +111,54 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
+            // Redirect to intended route or default to admin dashboard
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Login successful.',
+                    'redirect' => route('admin.dashboard'),
+                ]);
+            }
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Login successful.',
+                ]);
+            }
+
             return redirect()->intended(route('admin.dashboard'));
         } catch (ValidationException $e) {
-            return back()->withErrors($e->errors());
+            Log::error('Admin login validation error: ' . $e->getMessage());
+            // Return validation errors as JSON or redirect back with errors
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Validation failed.',
+                    'errors' => $e->errors(),
+                ], 422);
+            }
+            return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
+            // Log unexpected errors
             Log::error('Admin login error: ' . $e->getMessage());
-            return back()->with('error', 'An unexpected error occurred. Please try again.');
+            // Return a generic error message
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'An unexpected error occurred. Please try again.',
+                ], 500);
+            }
+            Log::error('Admin login error: ' . $e->getMessage());
+            // Redirect back with error message
+            return back()->with('error', 'An unexpected error occurred. Please try again.')->withInput();
         }
     }
-
 
     public function logout(Request $request): RedirectResponse
     {
         try {
-            Auth::guard('admin')->logout();
+            Auth::guard('web')->logout();
 
             $request->session()->invalidate();
             $request->session()->regenerateToken();
@@ -160,7 +190,7 @@ class AuthController extends Controller
             ->first();
 
         if (!$user) {
-            return back()->withErrors(['otp' => 'Invalid or expired OTP']);
+            return back()->withErrors(['otp' => 'Invalid or expired OTP'])->withInput();
         }
 
         $user->update([
@@ -169,7 +199,7 @@ class AuthController extends Controller
             'email_verified_at' => now(),
         ]);
 
-        Auth::guard('admin')->login($user);
+        Auth::guard('web')->login($user);
 
         return redirect()->route('admin.dashboard')
             ->with('status', 'OTP verified successfully');
@@ -186,7 +216,7 @@ class AuthController extends Controller
         $otp = $this->generateOtp();
         $user->update([
             'otp' => $otp,
-            'otp_expires_at' => Carbon::now()->addMinutes(config('auth.otp_expiry')),
+            'otp_expires_at' => Carbon::now()->addMinutes(config('auth.otp_expiry', 10)),
         ]);
 
         $user->notify(new SendOtpNotification($otp));

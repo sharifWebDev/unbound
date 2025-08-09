@@ -27,8 +27,8 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
 
-            // Admin routes
-            Route::middleware(['web'])
+            // customer routes
+            Route::middleware(['web', 'auth:customer', 'verified'])
                 ->prefix('customer')
                 ->name('customer.')
                 ->group(base_path('routes/customer.php'));
@@ -47,7 +47,7 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
 
-        RateLimiter::for('admin-auth', function (Request $request) {
+        RateLimiter::for('web-auth', function (Request $request) {
             return Limit::perMinute(5)->by($request->ip());
         });
 

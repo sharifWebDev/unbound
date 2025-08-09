@@ -10,11 +10,6 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
-        ],
-
-        'admin' => [
-            'driver' => 'session',
-            'provider' => 'users',
             'hash' => false,
             'expire' => 1440, // 24 hours
         ],

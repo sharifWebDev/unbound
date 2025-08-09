@@ -10,7 +10,7 @@ Route::get('/', function () {
 
 Route::prefix('admin')->group(function () {
     // Guest routes
-    Route::middleware('guest:admin')->group(function () {
+    // Route::middleware('guest:web')->group(function () {
         Route::get('register', [AuthController::class, 'showRegistrationForm'])->name('register');
         Route::post('register', [AuthController::class, 'register']);
 
@@ -20,10 +20,10 @@ Route::prefix('admin')->group(function () {
         Route::get('verify-otp', [AuthController::class, 'showOtpVerificationForm'])->name('verify.otp.form');
         Route::post('verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.otp');
         Route::post('resend-otp', [AuthController::class, 'resendOtp'])->name('resend.otp');
-    });
+    // });
 
     // Authenticated routes
-    // Route::middleware(['auth:admin', 'admin', 'verified'])->group(function () {
+    // Route::middleware(['web', 'auth:web', 'admin', 'verified'])->group(function () {
         Route::get('/', function () { return redirect()->route('admin.dashboard'); });
         Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
         Route::get('bookings', [AdminDashboardController::class, 'booking'])->name('admin.bookings.index');
