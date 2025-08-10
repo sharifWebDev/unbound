@@ -442,13 +442,13 @@
                      <div id="forgotPasswordStep1">
                          <p class="mb-4 text-muted">Enter your email address and we'll send you a link to reset your
                              password.</p>
-                         <form id="forgotPasswordForm">
+                         <form method="POST" action="{{ route('customer.verification.resend') }}" id="forgotPasswordForm">
                              <div class="mb-3 form-group">
                                  <label for="forgotEmail" class="form-label">
                                      <i class="bi bi-envelope me-2"></i>Email Address
                                  </label>
                                  <input type="email" class="form-control" id="forgotEmail" name="email"
-                                     placeholder="Enter your email address" required>
+                                     placeholder="Enter your email address" value="{{ old('email', auth('customer')->user() ? auth('customer')->user()->email : '') }}" required autofocus>
                              </div>
                          </form>
                      </div>
@@ -520,13 +520,29 @@
          }
 
          function resendResetEmail() {
+            event.preventDefault();
              const email = document.getElementById('forgotEmail').value;
              if (email) {
-                 // Simulate resending email
-                 alert('Reset email resent to ' + email);
+                //fthis form submit by axios
+                 const form = document.getElementById('forgotPasswordForm');
+                 axios.post(form.action, new FormData(form))
+                     .then(response => {
+                         const data = response.data;
+                         if (data.status === 'success') {
+                             document.getElementById('forgotPasswordStep1').style.display = 'none';
+                             document.getElementById('forgotPasswordStep2').style.display = 'block';
+                         } else {
+                             alert(data.message);
+                         }
+                     })
+                     .catch(error => {
+                         console.error('Error:', error);
+                         alert('An error occurred while resending the email. Please try again later.');
+                     });
+             } else {
+                 alert('Please enter your email address.');
              }
          }
-
          // Form validation and animation
          document.addEventListener('DOMContentLoaded', function() {
              const form = document.querySelector('.login-form');
@@ -653,12 +669,28 @@
                          '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
                      submitBtn.disabled = true;
 
-                     // Simulate sending reset email
-                     setTimeout(() => {
-                         document.getElementById('forgotPasswordStep1').style.display = 'none';
-                         document.getElementById('forgotPasswordStep2').style.display = 'block';
-                         submitBtn.style.display = 'none';
-                     }, 1500);
+                     // Simulate sending reset email axios
+                     const formData = new FormData(forgotPasswordForm);
+
+                     axios.post(forgotPasswordForm.action, formData)
+                         .then(response => {
+                             const data = response.data;
+                             if (data.success) {
+                                 document.getElementById('forgotPasswordStep1').style.display = 'none';
+                                 document.getElementById('forgotPasswordStep2').style.display = 'block';
+                                 submitBtn.style.display = 'none';
+                             } else {
+                                 alert('Error sending reset email: ' + data.message);
+                                 submitBtn.innerHTML = originalText;
+                                 submitBtn.disabled = false;
+                             }
+                         })
+                         .catch(error => {
+                             console.error('Error:', error);
+                             alert((error.response?.data?.message || error.message));
+                             submitBtn.innerHTML = originalText;
+                             submitBtn.disabled = false;
+                         }); 
                  });
              }
 

@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
@@ -17,9 +19,12 @@ use Illuminate\Validation\ValidationException;
 use App\Http\Requests\Customer\Auth\LoginRequest;
 use App\Notifications\Customer\SendOtpNotification;
 use App\Http\Requests\Customer\Auth\RegisterRequest;
+use App\Notifications\Customer\VerifyEmailNotification;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AuthController extends Controller
 {
+
     public function showRegistrationForm(): View
     {
         return view('customer.auth.login');
@@ -38,26 +43,40 @@ class AuthController extends Controller
                 'password' => Hash::make($validated['password']),
                 'address' => $validated['address'],
                 'country' => $validated['country'],
-                'agree_terms' => $validated['agreeTerms'],
+                'agree_terms' => $validated['agreeTerms'] ?? false,
                 'subscribe_newsletter' => $validated['subscribeNewsletter'] ?? false,
                 'email_verified_at' => null,
                 'is_active' => true,
             ]);
 
-            // Generate OTP
-            $otp = $this->generateOtp();
-            $customer->update([
-                'otp' => $otp,
-                'otp_expires_at' => Carbon::now()->addMinutes(config('auth.otp_expiry')),
-            ]);
+            // Generate verification URL
+            $verificationUrl = URL::temporarySignedRoute(
+                'verification.verify',
+                now()->addMinutes(config('auth.verification.expire', 60)),
+                [
+                    'id' => $customer->getKey(),
+                    'hash' => sha1($customer->getEmailForVerification()),
+                ]
+            );
 
-            // Send OTP notification
-            $customer->notify(new SendOtpNotification($otp));
+            // Send verification notification
+            $customer->notify(new VerifyEmailNotification($verificationUrl));
+
+
+            // // Generate OTP
+            // $otp = $this->generateOtp();
+            // $customer->update([
+            //     'otp' => $otp,
+            //     'otp_expires_at' => Carbon::now()->addMinutes(config('auth.otp_expiry')),
+            // ]);
+
+            // // Send OTP notification
+            // $customer->notify(new SendOtpNotification($otp));
 
             event(new Registered($customer));
 
             return response()->json([
-                'status' => 'success',
+                'success' => true,
                 'message' => 'Registration successful. Please verify your email.',
                 'email' => $customer->email,
             ], 201);
@@ -70,7 +89,7 @@ class AuthController extends Controller
             Log::error('Customer registration error: ' . $e->getMessage());
             return response()->json([
                 'status' => 'error',
-                'message' => 'An error occurred during registration.'. $e->getMessage(),
+                'message' => 'An error occurred during registration.' . $e->getMessage(),
             ], 500);
             // return back()->with('error', 'An error occurred during registration.');
         }
@@ -115,7 +134,6 @@ class AuthController extends Controller
             }
 
             return redirect()->intended(route('customer.dashboard'));
-
         } catch (ValidationException $e) {
             if ($request->expectsJson()) {
                 return response()->json([
@@ -151,6 +169,176 @@ class AuthController extends Controller
             return back()->with('error', 'An error occurred during logout.');
         }
     }
+
+
+    public function verify(Request $request, $id)
+    {
+        try {
+            $customer = Customer::findOrFail($id);
+
+            if (!URL::hasValidSignature($request)) {
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Invalid verification link or link has expired.',
+                    ], 403);
+                }
+
+                return redirect()->route('customer.login')
+                    ->with('error', 'Invalid verification link or link has expired.');
+            }
+
+            if ($customer->hasVerifiedEmail()) {
+                Auth::guard('customer')->login($customer);
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => 'Email already verified.',
+                        'redirect' => route('customer.dashboard')
+                    ]);
+                }
+                return redirect()->route('customer.dashboard')
+                    ->with('info', 'Your email is already verified.');
+            }
+
+            if ($customer->markEmailAsVerified()) {
+                event(new Verified($customer));
+
+                Auth::guard('customer')->login($customer);
+                $customer->logLoginAttempt($request->ip());
+                $request->session()->regenerate();
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => 'Email verified successfully!',
+                        'redirect' => route('customer.dashboard')
+                    ]);
+                }
+                return redirect()->intended(route('customer.dashboard'))
+                    ->with('success', 'Email verified successfully!');
+            }
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Email verification failed.',
+                ], 400);
+            }
+            return redirect()->route('customer.login')
+                ->with('error', 'Email verification failed. Please try again.');
+        } catch (ModelNotFoundException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'User not found.',
+                ], 404);
+            }
+            return redirect()->route('customer.login')
+                ->with('error', 'User not found.');
+        } catch (\Exception $e) {
+            Log::error('Email verification error: ' . $e->getMessage());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'An error occurred during verification.',
+                ], 500);
+            }
+            return redirect()->route('customer.login')
+                ->with('error', 'An error occurred during verification. Please try again.');
+        }
+    }
+
+    // For web responses
+    public function resend(Request $request)
+    {
+        $customer = Customer::where('email', $request->email)->first();
+
+        if (!$customer) {
+            return response()->json([
+                'status' => 'error',
+                'success' => false,
+                'message' => 'Customer not found.',
+            ]);
+        }
+
+        if ($customer->hasVerifiedEmail()) {
+            return response()->json([
+                'status' => 'error',
+                'success' => false,
+                'message' => 'Email already verified.',
+                'redirect' => route('customer.dashboard'),
+            ]);
+        }
+
+        $customer->sendEmailVerificationNotification();
+
+        return response()->json([
+            'status' => 'success',
+            'success' => true,
+            'message' => 'Verification email sent successfully.',
+        ]);
+    }
+
+
+    public function resetPassword(Request $request)
+    {
+        $customer = Customer::findOrFail($id);
+
+            if (!URL::hasValidSignature($request)) {
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Invalid verification link or link has expired.',
+                    ], 403);
+                }
+
+                return redirect()->route('customer.login')
+                    ->with('error', 'Invalid verification link or link has expired.');
+            }
+
+            if (!$customer->hasVerifiedEmail()) {
+
+                return redirect()->route('customer.login')
+                    ->with('info', 'Your email is not verified. Please verify your email first.');
+            }
+
+             // Generate verification URL
+            $verificationUrl = URL::temporarySignedRoute(
+                'verification.verify',
+                now()->addMinutes(config('auth.verification.expire', 60)),
+                [
+                    'id' => $customer->getKey(),
+                    'hash' => sha1($customer->getEmailForVerification()),
+                ]
+            );
+
+            // // Send verification notification
+            // $customer->notify(new ResetPasswordNotification($verificationUrl));
+
+            // if ($request->expectsJson()) {
+            //     return response()->json([
+            //         'success' => true,
+            //         'status' => 'success',
+            //         'message' => 'Verification email sent successfully.',
+            //     ]);
+            // }
+
+            // return redirect()->route('customer.reset-password')
+            //     ->with('success', 'Verification email sent successfully.');
+
+    }
+
+    public function reset(Request $request)
+    {
+
+
+    }
+
 
     public function showOtpVerificationForm(): View
     {

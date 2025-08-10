@@ -8,7 +8,7 @@ Route::get('/', function () {
     return redirect()->route('admin.login');
 });
 
-Route::get('login', function ()  {
+Route::get('login', function () {
     return redirect()->route('admin.login');
 })->name('login');
 
@@ -20,6 +20,11 @@ Route::prefix('admin')->group(function () {
 
         Route::get('login', [AuthController::class, 'showLoginForm'])->name('admin.login');
         Route::post('auth/login', [AuthController::class, 'login'])->name('admin.login.submit');
+
+
+        Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify'])
+            ->name('verification.verify')
+            ->middleware('signed');
 
         Route::get('verify-otp', [AuthController::class, 'showOtpVerificationForm'])->name('verify.otp.form');
         Route::post('verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.otp');

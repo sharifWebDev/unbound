@@ -7,13 +7,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SendOtpNotification extends Notification implements ShouldQueue
+class VerifyEmailNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     public function __construct(
-        public string $otp,
-        public int $expiryMinutes = 10
+        public string $verificationUrl
     ) {}
 
     public function via($notifiable): array
@@ -24,10 +23,9 @@ class SendOtpNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Your Customer Portal OTP Code')
-            ->markdown('emails.customer.otp', [
-                'otp' => $this->otp,
-                'expiryMinutes' => $this->expiryMinutes,
+            ->subject('Verify Your Email Address')
+            ->markdown('emails.customer.verify-email', [
+                'verificationUrl' => $this->verificationUrl,
                 'user' => $notifiable,
             ]);
     }

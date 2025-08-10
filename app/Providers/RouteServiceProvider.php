@@ -24,7 +24,6 @@ class RouteServiceProvider extends ServiceProvider
         $this->routes(function () {
 
             Route::prefix('customer')
-                ->as('customer.')
                 ->middleware(['web'])
                 ->group(base_path('routes/customer.php'));
 

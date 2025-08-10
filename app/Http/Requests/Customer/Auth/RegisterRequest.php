@@ -28,7 +28,8 @@ class RegisterRequest extends FormRequest
             'phone' => ['required', 'string', 'max:20', 'regex:/^\+?[0-9\s\-]{7,20}$/'],
             'password' => [
                 'required', 'confirmed',
-                Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised(3)
+                Password::min(4)
+                // Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised(3)
             ],
             'address' => ['required', 'string', 'max:255'],
             'country' => ['required', 'string'],
