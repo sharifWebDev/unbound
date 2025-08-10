@@ -58,7 +58,7 @@ class AuthController extends Controller
             event(new Registered($user));
 
             return response()->json([
-                'status' => 'success',
+                'success' => true,
                 'message' => 'Registration successful. Please verify your email.',
                 'email' => $user->email,
             ], 201);
@@ -78,7 +78,6 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): RedirectResponse|JsonResponse
     {
-        dd($request->all());
         try {
             $credentials = $request->only('email', 'password');
             $remember = $request->boolean('remember');
@@ -98,40 +97,30 @@ class AuthController extends Controller
                 ]);
             }
 
-            if (!$user->hasAnyRole(['super_admin', 'admin'])) {
+            if (!$user->hasAnyRole(['super_admin', 'admin', 'tour_guide'])) {
                 Auth::guard('web')->logout();
                 throw ValidationException::withMessages([
                     'email' => [trans('auth.unauthorized')],
                 ]);
             }
 
-            // Optional: Log login attempt
             if (method_exists($user, 'logLoginAttempt')) {
                 $user->logLoginAttempt($request->ip());
             }
 
             $request->session()->regenerate();
 
-            // Redirect to intended route or default to admin dashboard
             if ($request->expectsJson()) {
                 return response()->json([
-                    'status' => 'success',
+                    'success' => true,
                     'message' => 'Login successful.',
                     'redirect' => route('admin.dashboard'),
                 ]);
             }
 
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Login successful.',
-                ]);
-            }
-
             return redirect()->intended(route('admin.dashboard'));
         } catch (ValidationException $e) {
-            Log::error('Admin login validation error: ' . $e->getMessage());
-            // Return validation errors as JSON or redirect back with errors
+            info('Admin login validation error: ', [$e]);
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
@@ -141,17 +130,14 @@ class AuthController extends Controller
             }
             return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            // Log unexpected errors
             Log::error('Admin login error: ' . $e->getMessage());
-            // Return a generic error message
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'An unexpected error occurred. Please try again.',
                 ], 500);
             }
-            Log::error('Admin login error: ' . $e->getMessage());
-            // Redirect back with error message
+
             return back()->with('error', 'An unexpected error occurred. Please try again.')->withInput();
         }
     }

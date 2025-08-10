@@ -11,3 +11,5 @@ if (token) {
 } else {
     console.error('CSRF token not found: Please add <meta name="csrf-token" content="{{ csrf_token() }}"> to your layout.');
 }
+
+export default window.axios;

@@ -9,7 +9,6 @@ class Authenticate
 {
     public function handle($request, Closure $next, $guard = 'web')
     {
-        dd($guard);
         if (!Auth::guard($guard)->check()) {
             if ($guard === 'customer') {
                 return redirect()->route('customer.login')

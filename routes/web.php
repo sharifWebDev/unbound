@@ -8,14 +8,18 @@ Route::get('/', function () {
     return redirect()->route('admin.login');
 });
 
+Route::get('login', function ()  {
+    return redirect()->route('admin.login');
+})->name('login');
+
 Route::prefix('admin')->group(function () {
     // Guest routes
-    Route::middleware('guest:web')->group(function () {
+    Route::middleware('admin.guest:web')->group(function () {
         Route::get('register', [AuthController::class, 'showRegistrationForm'])->name('register');
         Route::post('register', [AuthController::class, 'register']);
 
-        Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-        Route::post('login', [AuthController::class, 'login']);
+        Route::get('login', [AuthController::class, 'showLoginForm'])->name('admin.login');
+        Route::post('auth/login', [AuthController::class, 'login'])->name('admin.login.submit');
 
         Route::get('verify-otp', [AuthController::class, 'showOtpVerificationForm'])->name('verify.otp.form');
         Route::post('verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.otp');
@@ -23,7 +27,7 @@ Route::prefix('admin')->group(function () {
     });
 
     // Authenticated routes
-    Route::middleware(['web', 'auth:web', 'admin', 'verified'])->group(function () {
+    Route::middleware(['web', 'admin.auth:web', 'verified'])->group(function () {
         Route::get('/', function () {
             return redirect()->route('admin.dashboard');
         });
@@ -38,6 +42,6 @@ Route::prefix('admin')->group(function () {
         Route::get('create-package', [AdminDashboardController::class, 'packageCreate'])->name('admin.packages.create');
         Route::get('users', [AdminDashboardController::class, 'user'])->name('admin.users.index');
         Route::get('profile', [AdminDashboardController::class, 'profile'])->name('admin.profile');
-        Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+        Route::post('logout', [AuthController::class, 'logout'])->name('admin.logout');
     });
 });

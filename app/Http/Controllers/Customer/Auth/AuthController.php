@@ -27,7 +27,6 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request): JsonResponse|RedirectResponse
     {
-        \Log::info($request->all());
         try {
             $validated = $request->validated();
 
@@ -71,7 +70,7 @@ class AuthController extends Controller
             Log::error('Customer registration error: ' . $e->getMessage());
             return response()->json([
                 'status' => 'error',
-                'message' => 'An error occurred during registration.',
+                'message' => 'An error occurred during registration.'. $e->getMessage(),
             ], 500);
             // return back()->with('error', 'An error occurred during registration.');
         }
@@ -82,7 +81,7 @@ class AuthController extends Controller
         return view('customer.auth.login');
     }
 
-    public function login(LoginRequest $request): RedirectResponse
+    public function login(LoginRequest $request): RedirectResponse|JsonResponse
     {
         try {
             $credentials = $request->only('email', 'password');
@@ -107,12 +106,33 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Login successful.',
+                    'redirect' => route('customer.dashboard'),
+                ]);
+            }
+
             return redirect()->intended(route('customer.dashboard'));
 
         } catch (ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Validation failed.',
+                    'errors' => $e->errors(),
+                ], 422);
+            }
             return back()->withErrors($e->errors());
         } catch (\Exception $e) {
             Log::error('Customer login error: ' . $e->getMessage());
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'An unexpected error occurred. Please try again.',
+                ], 500);
+            }
             return back()->with('error', 'An error occurred during login.');
         }
     }

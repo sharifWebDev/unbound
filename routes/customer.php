@@ -20,7 +20,7 @@ Route::middleware('customer.guest:customer')->group(function () {
 });
 
 // Authenticated routes
-// Route::middleware(['auth:customer', 'verified'])->group(function () {
+Route::middleware(['auth:customer', 'verified'])->group(function () {
 
     Route::get('/', function () { return redirect()->route('dashboard');});
     Route::get('dashboard', [CustomerDashboardController::class, 'dashboard'])->name('dashboard');
@@ -31,4 +31,4 @@ Route::middleware('customer.guest:customer')->group(function () {
     Route::get('payments/receipt', [CustomerDashboardController::class, 'paymentReceipt'])->name('payments.receipt');
     Route::get('profile', [CustomerDashboardController::class, 'profile'])->name('profile');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-// });
+});

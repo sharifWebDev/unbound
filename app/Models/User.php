@@ -14,10 +14,6 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
 
-    protected $keyType = 'string';
-
-    public $incrementing = false;
-
     protected $fillable = [
         'first_name',
         'last_name',
@@ -50,15 +46,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_active' => 'boolean',
         'password' => 'hashed',
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            $model->id = (string) \Illuminate\Support\Str::uuid();
-        });
-    }
 
     public function isSuperAdmin(): bool
     {
