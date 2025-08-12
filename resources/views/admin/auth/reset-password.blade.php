@@ -15,11 +15,11 @@
 
                  <div class="login-welcome">
                      <h1>Hello, {{ request('name') }}</h1>
-                     <p>Reset your password and continue your journey with us</p>
+                     <p>Reset your password and continue your account.</p>
                  </div>
 
                  <!-- Login Form -->
-                 <form class="login-form" action="{{ route('customer.reset.password', request()->query()) }}" method="POST"
+                 <form class="login-form" action="{{ route('reset.password', request()->query()) }}" method="POST"
                      id="resetPasswordForm">
                      @csrf
                      @method('POST')
@@ -56,7 +56,7 @@
                          </div>
                      </div>
                      <div class="form-options justify-content-end">
-                         <a href="{{ route('customer.login') }}" class="forgot-password">Sign in?</a>
+                         <a href="{{ route('admin.login') }}" class="forgot-password">Sign in?</a>
                      </div>
 
                      <button type="submit" class="btn btn-login">
@@ -135,7 +135,7 @@
                              submitBtn.innerHTML =
                                  '<span class="spinner-border spinner-border-sm me-2"></span> Redirecting...';
                              setTimeout(() => {
-                                 window.location.href = data.redirect || '/customer/login';
+                                 window.location.href = data.redirect || '/admin/login';
                              }, 1000);
                          } else {
                              toastr.error(data.message || 'Something went wrong.');

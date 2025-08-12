@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            Swal.fire({
+            swal.fire({
                 title: 'Confirm Logout',
                 text: 'Are you sure you want to log out from your account?',
                 icon: 'warning',
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     axios.post(logoutForm.action)
                         .then(() => {
-                            Swal.fire({
+                            swal.fire({
                                 title: 'Logged out!',
                                 icon: 'success',
                                 timer: 1500,
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             });
                         })
                         .catch(() => {
-                            Swal.fire({
+                            swal.fire({
                                 title: 'Logout failed',
                                 text: 'Please try again later.',
                                 icon: 'error',

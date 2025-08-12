@@ -54,9 +54,9 @@ class Customer extends Authenticatable implements MustVerifyEmail
             'last_login_ip' => $ip,
         ]);
     }
-    
+
     public function getFullNameAttribute()
     {
-        return $this->first_name . ' ' . $this->last_name;
+        return $this->first_name.' '.$this->last_name;
     }
 }

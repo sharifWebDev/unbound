@@ -1,10 +1,10 @@
 // bootstrap.js
 import axios from 'axios';
-import Swal from 'sweetalert2';
+import swal from 'sweetalert2';
 import $ from 'jquery';
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css';
- 
+
 window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -15,7 +15,7 @@ if (token) {
     console.error('CSRF token not found: Please add <meta name="csrf-token" content="{{ csrf_token() }}"> to your layout.');
 }
 
-window.Swal = Swal;
+window.swal = swal;
 
 toastr.options = {
     closeButton: true,
@@ -28,4 +28,4 @@ window.toastr = toastr;
 window.$ = $;
 window.jQuery = $;
 
-export { axios, Swal, toastr, $ };
+export { axios, swal, toastr, $ };

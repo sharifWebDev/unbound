@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Customer\Auth;
 
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
 {
@@ -23,18 +23,18 @@ class RegisterRequest extends FormRequest
             'lastName' => ['required', 'string', 'max:50', 'regex:/^[\p{L}\s\-\.]+$/u'],
             'email' => [
                 'required', 'string', 'email:rfc,dns', 'max:255',
-                Rule::unique('users', 'email')->whereNull('deleted_at')
+                Rule::unique('users', 'email')->whereNull('deleted_at'),
             ],
             'phone' => ['required', 'string', 'max:20', 'regex:/^\+?[0-9\s\-]{7,20}$/'],
             'password' => [
                 'required', 'confirmed',
-                Password::min(4)
+                Password::min(4),
                 // Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised(3)
             ],
             'address' => ['required', 'string', 'max:255'],
             'country' => ['required', 'string'],
             'agreeTerms' => ['required', 'accepted'],
-            'subscribeNewsletter' => ['nullable', 'boolean']
+            'subscribeNewsletter' => ['nullable', 'boolean'],
         ];
     }
 
@@ -46,7 +46,7 @@ class RegisterRequest extends FormRequest
             'email.unique' => 'This email is already registered.',
             'password.uncompromised' => 'This password has been exposed in a data breach.',
             'phone.regex' => 'Invalid phone number format.',
-            'agreeTerms.accepted' => 'You must accept the terms and privacy policy.'
+            'agreeTerms.accepted' => 'You must accept the terms and privacy policy.',
         ];
     }
 

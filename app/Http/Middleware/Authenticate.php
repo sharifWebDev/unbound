@@ -9,7 +9,7 @@ class Authenticate
 {
     public function handle($request, Closure $next, $guard = 'web')
     {
-        if (!Auth::guard($guard)->check()) {
+        if (! Auth::guard($guard)->check()) {
             if ($guard === 'customer') {
                 return redirect()->route('customer.login')
                     ->with('error', 'Access Denied! You must login as a customer.');

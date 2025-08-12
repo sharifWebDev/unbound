@@ -2,14 +2,12 @@
 
 namespace App\Http\Requests\Customer\Auth;
 
+use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
-use Illuminate\Auth\Events\Lockout;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class LoginRequest extends FormRequest
 {
@@ -64,6 +62,7 @@ class LoginRequest extends FormRequest
             }
         });
     }
+
     protected function hasTooManyLoginAttempts(): bool
     {
         return RateLimiter::tooManyAttempts(
@@ -71,7 +70,6 @@ class LoginRequest extends FormRequest
             $this->maxAttempts()
         );
     }
-
 
     protected function fireLockoutEvent(): void
     {
@@ -85,7 +83,7 @@ class LoginRequest extends FormRequest
 
     protected function throttleKey(): string
     {
-        return Str::lower($this->input('email')) . '|' . $this->ip();
+        return Str::lower($this->input('email')).'|'.$this->ip();
     }
 
     protected function maxAttempts(): int
