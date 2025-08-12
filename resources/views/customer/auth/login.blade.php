@@ -560,7 +560,6 @@
                      }
                  });
 
-                 // Check if input has value on load
                  if (input.value !== '') {
                      input.parentElement.classList.add('focused');
                  }
@@ -690,7 +689,7 @@
                              alert((error.response?.data?.message || error.message));
                              submitBtn.innerHTML = originalText;
                              submitBtn.disabled = false;
-                         }); 
+                         });
                  });
              }
 

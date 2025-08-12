@@ -32,15 +32,13 @@
                 href="{{ url('admin/profile') }}">
                 <img src="{{ asset('backend/img/ico/ico-profile.svg') }}" alt=""> Profile
             </a>
-            <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
+            <form id="admin-logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
                 @csrf
             </form>
 
-            <a class="nav-link" href="#"
-                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <a class="nav-link logout-link" href="javascript:void(0)" data-logout-form="admin-logout-form"  data-logout-redirect="{{ route('admin.login') }}">
                 <img src="{{ asset('backend/img/ico/ico-logout.svg') }}" alt=""> Logout
             </a>
-
         </nav>
     </div>
 @elseif(Auth::guard('customer')->check() && request()->is('customer/*'))
@@ -74,8 +72,7 @@
                 @csrf
             </form>
 
-            <a class="nav-link" href="#"
-                onclick="event.preventDefault(); document.getElementById('customer-logout-form').submit();">
+            <a class="nav-link logout-link" href="javascript:void(0)" data-logout-form="customer-logout-form"  data-logout-redirect="{{ route('customer.login') }}">
                 <img src="{{ asset('backend/img/ico/ico-logout.svg') }}" alt=""> Logout
             </a>
         </nav>
