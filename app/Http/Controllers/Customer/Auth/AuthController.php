@@ -5,33 +5,28 @@ namespace App\Http\Controllers\Customer\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\Auth\LoginRequest;
 use App\Http\Requests\Customer\Auth\RegisterRequest;
-use App\Models\Country;
-use App\Models\Customer;
-use App\Notifications\Customer\ResetPasswordNotification;
-use App\Notifications\Customer\SendOtpNotification;
-use App\Notifications\Customer\VerifyEmailNotification;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Events\Verified;
+use App\Services\Customer\AuthService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class AuthController extends Controller
 {
+    protected $authService;
+
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
     public function showRegistrationForm(): View
     {
-        $countries = Country::select('id', 'name', 'code')->get();
+        $countries = $this->authService->getCountries();
 
         return view('customer.auth.login', compact('countries'));
     }
@@ -39,42 +34,15 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse|RedirectResponse
     {
         try {
-            $validated = $request->validated();
-
-            $customer = Customer::create([
-                'first_name' => $validated['firstName'],
-                'last_name' => $validated['lastName'],
-                'email' => $validated['email'],
-                'phone' => $validated['phone'],
-                'password' => Hash::make($validated['password']),
-                'address' => $validated['address'],
-                'country' => $validated['country'],
-                'agree_terms' => $validated['agreeTerms'] ?? false,
-                'subscribe_newsletter' => $validated['subscribeNewsletter'] ?? false,
-                'email_verified_at' => null,
-                'is_active' => true,
-            ]);
-
-            $verificationUrl = URL::temporarySignedRoute(
-                'verification.verify',
-                now()->addMinutes(config('auth.verification.expire', 60)),
-                [
-                    'id' => $customer->getKey(),
-                    'hash' => sha1($customer->getEmailForVerification()),
-                ]
-            );
-
-            $customer->notify(new VerifyEmailNotification($verificationUrl));
-
-            event(new Registered($customer));
+            $response = $this->authService->register($request->validated());
 
             return response()->json([
-                'success' => true,
-                'message' => 'Registration successful. Please verify your email.',
-                'email' => $customer->email,
+                'success' => $response['success'],
+                'message' => $response['message'],
+                'email' => $response['email'],
             ], 201);
         } catch (\Exception $e) {
-            Log::error('registration error: '.$e->getMessage());
+            Log::error('Customer registration error: '.$e->getMessage());
 
             return response()->json([
                 'status' => 'error',
@@ -85,7 +53,7 @@ class AuthController extends Controller
 
     public function showLoginForm(): View
     {
-        $countries = Country::select('id', 'name', 'code')->get();
+        $countries = $this->authService->getCountries();
 
         return view('customer.auth.login', compact('countries'));
     }
@@ -93,25 +61,11 @@ class AuthController extends Controller
     public function login(LoginRequest $request): RedirectResponse|JsonResponse
     {
         try {
-            $credentials = $request->only('email', 'password');
-            $remember = $request->boolean('remember');
-
-            if (! Auth::guard('customer')->attempt($credentials, $remember)) {
-                throw ValidationException::withMessages([
-                    'email' => [trans('auth.failed')],
-                ]);
-            }
-
-            $customer = Auth::guard('customer')->user();
-
-            if (! $customer->is_active) {
-                Auth::guard('customer')->logout();
-                throw ValidationException::withMessages([
-                    'email' => [trans('auth.inactive')],
-                ]);
-            }
-
-            $customer->logLoginAttempt($request->ip());
+            $customer = $this->authService->login(
+                $request->only('email', 'password'),
+                $request->boolean('remember'),
+                $request->ip()
+            );
 
             $request->session()->regenerate();
 
@@ -150,8 +104,7 @@ class AuthController extends Controller
     public function logout(Request $request): RedirectResponse
     {
         try {
-            Auth::guard('customer')->logout();
-
+            $this->authService->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
@@ -166,74 +119,34 @@ class AuthController extends Controller
     public function verify(Request $request, $id)
     {
         try {
-            $customer = Customer::findOrFail($id);
+            $response = $this->authService->verifyEmail($request, $id);
 
-            if (! URL::hasValidSignature($request)) {
-
-                if ($request->expectsJson()) {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'Invalid verification link or link has expired.',
-                    ], 403);
-                }
-
-                return redirect()->route('customer.login')
-                    ->with('error', 'Invalid verification link or link has expired.');
+            if ($request->expectsJson()) {
+                return response()->json($response);
             }
 
-            if ($customer->hasVerifiedEmail()) {
-                Auth::guard('customer')->login($customer);
-
-                if ($request->expectsJson()) {
-                    return response()->json([
-                        'status' => 'success',
-                        'message' => 'Email already verified.',
-                        'redirect' => route('customer.dashboard'),
-                    ]);
-                }
-
-                return redirect()->route('customer.dashboard')
-                    ->with('info', 'Your email is already verified.');
-            }
-
-            if ($customer->markEmailAsVerified()) {
-                event(new Verified($customer));
-
-                Auth::guard('customer')->login($customer);
-                $customer->logLoginAttempt($request->ip());
-                $request->session()->regenerate();
-
-                if ($request->expectsJson()) {
-                    return response()->json([
-                        'status' => 'success',
-                        'message' => 'Email verified successfully!',
-                        'redirect' => route('customer.dashboard'),
-                    ]);
-                }
-
-                return redirect()->intended(route('customer.dashboard'))
-                    ->with('success', 'Email verified successfully!');
-            }
-
+            return redirect()->route('customer.dashboard')
+                ->with('success', $response['message']);
+        } catch (ValidationException $e) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Email verification failed.',
-                ], 400);
+                    'message' => 'Invalid verification link or link has expired.',
+                ], 403);
             }
 
             return redirect()->route('customer.login')
-                ->with('error', 'Email verification failed. Please try again.');
+                ->with('error', 'Invalid verification link or link has expired.');
         } catch (ModelNotFoundException $e) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'User not found.',
+                    'message' => 'Customer not found.',
                 ], 404);
             }
 
             return redirect()->route('customer.login')
-                ->with('error', 'User not found.');
+                ->with('error', 'Customer not found.');
         } catch (\Exception $e) {
             Log::error('Email verification error: '.$e->getMessage());
 
@@ -251,64 +164,31 @@ class AuthController extends Controller
 
     public function resend(Request $request)
     {
-        $customer = Customer::where('email', $request->email)->first();
+        try {
+            $response = $this->authService->resendVerificationEmail($request->email);
 
-        if (! $customer) {
+            return response()->json($response);
+        } catch (ModelNotFoundException $e) {
             return response()->json([
                 'status' => 'error',
                 'success' => false,
                 'message' => 'Customer not found.',
             ]);
-        }
-
-        if ($customer->hasVerifiedEmail()) {
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'success' => false,
-                'message' => 'Email already verified.',
-                'redirect' => route('customer.dashboard'),
+                'message' => $e->getMessage(),
             ]);
         }
-
-        $customer->sendEmailVerificationNotification();
-
-        return response()->json([
-            'status' => 'success',
-            'success' => true,
-            'message' => 'Verification email sent successfully.',
-        ]);
     }
 
     public function sendResetPasswordLink(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|exists:customers,email',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'success' => false,
-                'message' => $validator->errors()->first(),
-            ]);
-        }
-
         try {
-            $customer = Customer::where('email', $request->email)->first();
+            $response = $this->authService->sendResetPasswordLink($request->email);
 
-            $temporaryUrl = URL::temporarySignedRoute(
-                'customer.verify.reset.password',
-                now()->addMinutes(20),
-                ['id' => $customer->id, 'email' => $customer->email, 'name' => $customer->full_name]
-            );
-
-            $customer->notify(new ResetPasswordNotification($temporaryUrl, $customer));
-
-            return response()->json([
-                'status' => 'success',
-                'success' => true,
-                'message' => 'A Password reset link sent to your email successfully.',
-            ], 200);
+            return response()->json($response, 200);
         } catch (\Exception $e) {
             Log::error('Failed to send password reset link: '.$e->getMessage());
 
@@ -322,65 +202,29 @@ class AuthController extends Controller
 
     public function verifyResetPassword(Request $request)
     {
-        if (! $request->hasValidSignature()) {
-            return redirect()->route('customer.login')
-                ->with('error', 'This password reset link is invalid or expired.');
-        }
+        try {
+            $customer = $this->authService->verifyResetPassword($request);
 
-        $customer = Customer::where('email', $request->email)->first();
-        if (! $customer) {
+            return view('customer.auth.reset-password', ['customerId' => $customer->id]);
+        } catch (\Exception $e) {
             return redirect()->route('customer.login')
-                ->with('error', 'Invalid password reset request.');
+                ->with('error', $e->getMessage());
         }
-
-        if (! $customer->is_active) {
-            return redirect()->route('customer.login')
-                ->with('error', 'Your account is inactive. Please contact support.');
-        }
-
-        return view('customer.auth.reset-password', ['customerId' => $customer->id]);
     }
 
     public function resetPassword(Request $request)
     {
-        // if (! $request->hasValidSignature()) {
-        //     return response()->json([
-        //         'status' => 'error',
-        //         'success' => false,
-        //         'message' => 'This password reset link is invalid or expired.',
-        //     ]);
-        // }
+        try {
+            $response = $this->authService->resetPassword($request->all());
 
-        $validator = Validator::make($request->all(), [
-            'id' => 'required|exists:customers,id',
-            'email' => 'required|exists:customers,email',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        if ($validator->fails()) {
+            return response()->json($response);
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'success' => false,
-                'message' => $validator->errors()->first(),
+                'message' => $e->getMessage(),
             ]);
         }
-
-        $customer = Customer::where('id', $request->id)
-            ->where('email', $request->email)
-            ->first();
-
-        $customer->password = Hash::make($request->password);
-        $customer->setRememberToken(Str::random(60));
-        $customer->save();
-
-        event(new PasswordReset($customer));
-
-        return response()->json([
-            'status' => 'success',
-            'success' => true,
-            'redirect' => route('customer.login'),
-            'message' => 'Password reset successfully.',
-        ]);
     }
 
     public function showOtpVerificationForm(): View
@@ -392,53 +236,25 @@ class AuthController extends Controller
 
     public function verifyOtp(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'email' => 'required|email|exists:customers,email',
-            'otp' => 'required|string|size:6',
-        ]);
+        try {
+            $customer = $this->authService->verifyOtp($request->email, $request->otp);
+            Auth::guard('customer')->login($customer);
 
-        $customer = Customer::where('email', $validated['email'])
-            ->where('otp', $validated['otp'])
-            ->where('otp_expires_at', '>', now())
-            ->first();
-
-        if (! $customer) {
+            return redirect()->route('customer.dashboard')
+                ->with('status', 'OTP verified successfully');
+        } catch (\Exception $e) {
             return back()->withErrors(['otp' => 'Invalid or expired OTP']);
         }
-
-        $customer->update([
-            'otp' => null,
-            'otp_expires_at' => null,
-            'email_verified_at' => now(),
-        ]);
-
-        Auth::guard('customer')->login($customer);
-
-        return redirect()->route('customer.dashboard')
-            ->with('status', 'OTP verified successfully');
     }
 
     public function resendOtp(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'email' => 'required|email|exists:customers,email',
-        ]);
+        try {
+            $response = $this->authService->resendOtp($request->email);
 
-        $customer = Customer::where('email', $validated['email'])->first();
-
-        $otp = $this->generateOtp();
-        $customer->update([
-            'otp' => $otp,
-            'otp_expires_at' => Carbon::now()->addMinutes(config('auth.otp_expiry')),
-        ]);
-
-        $customer->notify(new SendOtpNotification($otp));
-
-        return back()->with('status', 'A new OTP has been sent to your email.');
-    }
-
-    protected function generateOtp(): string
-    {
-        return (string) rand(100000, 999999);
+            return back()->with('status', $response['message']);
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 }

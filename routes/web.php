@@ -60,8 +60,6 @@ Route::prefix('admin')
                 Route::post('/password/reset', 'reset')->name('password.update');
             });
 
-
-
         Route::middleware(['web', 'admin.auth:web', 'verified'])->group(function () {
             Route::get('/', function () {
                 return redirect()->route('admin.dashboard');
