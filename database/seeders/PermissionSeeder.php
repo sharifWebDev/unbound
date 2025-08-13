@@ -15,12 +15,38 @@ class PermissionSeeder extends Seeder
     {
         $permissions = [
             [
+                'name' => 'admin_dashboard',
+                'alias' => 'Admin Dashboard',
+                'group' => 'Dashboard',
+                'guard_name' => 'web',
+                'created_at' => now(),
+
+            ],
+            [
+                'name' => 'tour_guide_dashboard',
+                'alias' => 'Tour Guide Dashboard',
+                'group' => 'Dashboard',
+                'guard_name' => 'tour_guide',
+                'created_at' => now(),
+            ],
+            [
+                'name' => 'customer_dashboard',
+                'alias' => 'Customer Dashboard',
+                'group' => 'Dashboard',
+                'guard_name' => 'customer',
+                'created_at' => now(),
+            ],
+            [
                 'name' => 'user_management',
+                'alias' => 'Users Management',
+                'group' => 'User Management',
                 'guard_name' => 'web',
                 'created_at' => now(),
             ],
             [
                 'name' => 'role_management',
+                'alias' => 'Role Management',
+                'group' => 'User Management',
                 'guard_name' => 'web',
                 'created_at' => now(),
             ],
@@ -31,6 +57,5 @@ class PermissionSeeder extends Seeder
         Permission::truncate();
         $permissionsTable->insert($permissions);
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
-
     }
 }

@@ -22,11 +22,6 @@ use Illuminate\Validation\ValidationException;
 
 class AuthService
 {
-    public function getCountries()
-    {
-        return Country::select('id', 'name', 'code')->get();
-    }
-
     public function register(array $data): array
     {
         try {
@@ -57,7 +52,7 @@ class AuthService
                 'email' => $user->email,
             ];
         } catch (\Exception $e) {
-            Log::error('registration error: '.$e->getMessage());
+            Log::error('registration error: ' . $e->getMessage());
             throw $e;
         }
     }
@@ -266,5 +261,10 @@ class AuthService
     protected function generateOtp(): string
     {
         return (string) rand(100000, 999999);
+    }
+
+    public function getCountries()
+    {
+        return Country::select('id', 'name', 'code')->get();
     }
 }
