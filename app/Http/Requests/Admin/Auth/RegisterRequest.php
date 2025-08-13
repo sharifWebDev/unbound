@@ -28,7 +28,7 @@ class RegisterRequest extends FormRequest
                 Password::min(8)->mixedCase()->letters()->numbers()->symbols(),
             ],
             'address' => ['required', 'string', 'max:255'],
-            'country' => ['required', 'string'],
+            'country' => ['required', 'numeric', 'exists:countries,id'],
             'agreeTerms' => ['required', 'accepted'],
             'subscribeNewsletter' => ['nullable', 'boolean'],
         ];

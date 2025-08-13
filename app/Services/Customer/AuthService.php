@@ -4,21 +4,22 @@ namespace App\Services\Customer;
 
 use App\Models\Country;
 use App\Models\Customer;
-use App\Notifications\Customer\ResetPasswordNotification;
-use App\Notifications\Customer\SendOtpNotification;
-use App\Notifications\Customer\VerifyEmailNotification;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\CustomerDetail;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Validation\ValidationException;
+use App\Notifications\Customer\SendOtpNotification;
+use App\Notifications\Customer\VerifyEmailNotification;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Notifications\Customer\ResetPasswordNotification;
 
 class AuthService
 {
@@ -31,12 +32,16 @@ class AuthService
                 'email' => $data['email'],
                 'phone' => $data['phone'],
                 'password' => Hash::make($data['password']),
-                'address' => $data['address'],
-                'country' => $data['country'],
                 'agree_terms' => $data['agreeTerms'] ?? false,
                 'subscribe_newsletter' => $data['subscribeNewsletter'] ?? false,
                 'email_verified_at' => null,
                 'is_active' => true,
+            ]);
+
+            CustomerDetail::create([
+                'customer_id' => $customer->id,
+                'country_id' => $data['country'],
+                'address' => $data['address'],
             ]);
 
             $verificationUrl = $this->generateVerificationUrl($customer);

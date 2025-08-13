@@ -203,7 +203,7 @@
                              <select class="form-select" id="signUpCountry" name="country" required>
                                  <option value="">Select your country</option>
                                  @foreach ($countries ?? [] as $country)
-                                     <option value="{{ $country->code }}">{{ $country->name }}</option>
+                                     <option value="{{ $country->id }}">{{ $country->name }}</option>
                                  @endforeach
                              </select>
                          </div>
