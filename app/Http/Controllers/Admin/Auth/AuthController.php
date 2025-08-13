@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Auth\LoginRequest;
-use App\Http\Requests\Admin\Auth\RegisterRequest;
-use App\Services\Admin\AuthService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
+use Exception;
+use App\Const\Errors;
+use App\Const\Message;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Services\Admin\AuthService;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\Admin\Auth\LoginRequest;
+use Illuminate\Validation\ValidationException;
+use App\Http\Requests\Admin\Auth\RegisterRequest;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AuthController extends Controller
 {
@@ -36,18 +39,9 @@ class AuthController extends Controller
         try {
             $response = $this->authService->register($request->validated());
 
-            return response()->json([
-                'success' => $response['success'],
-                'message' => $response['message'],
-                'email' => $response['email'],
-            ], 201);
-        } catch (\Exception $e) {
-            Log::error('registration error: '.$e->getMessage());
-
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An error occurred during registration.'.$e->getMessage(),
-            ], 500);
+            return success(Message::USER_REGISTRATION_SUCCESSFUL, $response);
+        } catch (Exception $e) {
+            return error(Message::USER_REGISTRATION_FAILED, $e->getMessage());
         }
     }
 
@@ -83,6 +77,7 @@ class AuthController extends Controller
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
+                    'success' => false,
                     'message' => 'Validation failed.',
                     'errors' => $e->errors(),
                 ], 422);
@@ -90,10 +85,11 @@ class AuthController extends Controller
 
             return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            Log::error('Admin login error: '.$e->getMessage());
+            Log::error('Admin login error: ' . $e->getMessage());
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
+                    'success' => false,
                     'message' => 'An unexpected error occurred. Please try again.',
                 ], 500);
             }
@@ -111,13 +107,13 @@ class AuthController extends Controller
 
             return redirect()->route('admin.login');
         } catch (\Exception $e) {
-            Log::error('Admin logout error: '.$e->getMessage());
+            Log::error('Admin logout error: ' . $e->getMessage());
 
             return back()->with('error', 'An error occurred during logout.');
         }
     }
 
-    public function verify(Request $request, $id)
+    public function verify(Request $request, $id): RedirectResponse|JsonResponse
     {
         try {
             $response = $this->authService->verifyEmail($request, $id);
@@ -142,6 +138,7 @@ class AuthController extends Controller
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
+                    'success' => false,
                     'message' => 'User not found.',
                 ], 404);
             }
@@ -149,11 +146,12 @@ class AuthController extends Controller
             return redirect()->route('admin.login')
                 ->with('error', 'User not found.');
         } catch (\Exception $e) {
-            Log::error('Email verification error: '.$e->getMessage());
+            Log::error('Email verification error: ' . $e->getMessage());
 
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
+                    'success' => false,
                     'message' => 'An error occurred during verification.',
                 ], 500);
             }
@@ -163,7 +161,7 @@ class AuthController extends Controller
         }
     }
 
-    public function resend(Request $request)
+    public function resend(Request $request): JsonResponse
     {
         try {
             $response = $this->authService->resendVerificationEmail($request->email);
@@ -184,14 +182,14 @@ class AuthController extends Controller
         }
     }
 
-    public function sendResetPasswordLink(Request $request)
+    public function sendResetPasswordLink(Request $request): JsonResponse
     {
         try {
             $response = $this->authService->sendResetPasswordLink($request->email);
 
             return response()->json($response, 200);
         } catch (\Exception $e) {
-            Log::error('Failed to send password reset link: '.$e->getMessage());
+            Log::error('Failed to send password reset link: ' . $e->getMessage());
 
             return response()->json([
                 'status' => 'error',
@@ -201,7 +199,7 @@ class AuthController extends Controller
         }
     }
 
-    public function verifyResetPassword(Request $request)
+    public function verifyResetPassword(Request $request): View|RedirectResponse
     {
         try {
             $user = $this->authService->verifyResetPassword($request);
@@ -213,7 +211,7 @@ class AuthController extends Controller
         }
     }
 
-    public function resetPassword(Request $request)
+    public function resetPassword(Request $request): JsonResponse
     {
         try {
             $response = $this->authService->resetPassword($request->all());

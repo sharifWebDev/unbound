@@ -2,23 +2,24 @@
 
 namespace App\Services\Admin;
 
-use App\Models\Country;
+use Exception;
 use App\Models\User;
-use App\Notifications\Admin\ResetPasswordNotification;
-use App\Notifications\Admin\SendOtpNotification;
-use App\Notifications\Admin\VerifyEmailNotification;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\Country;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Validation\ValidationException;
+use App\Notifications\Admin\SendOtpNotification;
+use App\Notifications\Admin\VerifyEmailNotification;
+use App\Notifications\Admin\ResetPasswordNotification;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AuthService
 {
@@ -47,11 +48,10 @@ class AuthService
             event(new Registered($user));
 
             return [
-                'success' => true,
                 'message' => 'Registration successful. Please verify your email.',
                 'email' => $user->email,
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('registration error: ' . $e->getMessage());
             throw $e;
         }
@@ -107,7 +107,13 @@ class AuthService
 
     public function verifyEmail(Request $request, $id): array
     {
-        $user = User::findOrFail($id);
+        $user = User::where('id', $id)->first();
+
+        if (! $user) {
+            throw ValidationException::withMessages([
+                'email' => ['User not found.'],
+            ]);
+        }
 
         if (! URL::hasValidSignature($request)) {
             throw ValidationException::withMessages([

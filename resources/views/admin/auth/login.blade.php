@@ -48,7 +48,7 @@
 
                      <div class="form-options">
                          <div class="remember-me">
-                             <input type="checkbox" id="remember" name="remember" class="form-check-input">
+                             <input type="checkbox" id="remember" name="remember" value="1" class="form-check-input">
                              <label for="remember" class="form-check-label">Remember me</label>
                          </div>
                          <a href="#" class="forgot-password" data-bs-toggle="modal"
@@ -65,15 +65,15 @@
                      </div>
 
                      <!-- <div class="social-login">
-                                <button type="button" class="btn btn-social btn-google">
-                                    <img src="/img/ico/ico-status.svg" alt="Google" class="social-icon">
-                                    Continue with Google
-                                </button>
-                                <button type="button" class="btn btn-social btn-facebook">
-                                    <img src="/img/ico/ico-bookings.svg" alt="Facebook" class="social-icon">
-                                    Continue with Facebook
-                                </button>
-                            </div> -->
+                                        <button type="button" class="btn btn-social btn-google">
+                                            <img src="/img/ico/ico-status.svg" alt="Google" class="social-icon">
+                                            Continue with Google
+                                        </button>
+                                        <button type="button" class="btn btn-social btn-facebook">
+                                            <img src="/img/ico/ico-bookings.svg" alt="Facebook" class="social-icon">
+                                            Continue with Facebook
+                                        </button>
+                                    </div> -->
 
                      <div class="signup-link">
                          <p>Don't have an account? <a href="#" data-bs-toggle="modal"
@@ -202,7 +202,7 @@
                              </label>
                              <select class="form-select" id="signUpCountry" name="country" required>
                                  <option value="">Select your country</option>
-                                @foreach ($countries ?? [] as $country)
+                                 @foreach ($countries ?? [] as $country)
                                      <option value="{{ $country->code }}">{{ $country->name }}</option>
                                  @endforeach
                              </select>
@@ -287,7 +287,7 @@
      </div>
 
  @endsection
-  @push('scripts')
+ @push('scripts')
      <!-- Custom JavaScript -->
      <script>
          function togglePassword() {
@@ -358,10 +358,10 @@
              const form = document.querySelector('.login-form');
              const inputs = document.querySelectorAll('.login-input');
 
-             // Add focus animations
              inputs.forEach(input => {
                  input.addEventListener('focus', function() {
                      this.parentElement.classList.add('focused');
+                     clearError(this);
                  });
 
                  input.addEventListener('blur', function() {
@@ -374,6 +374,21 @@
                      input.parentElement.classList.add('focused');
                  }
              });
+ 
+             function showError(input, message) {
+                 let errorEl = input.parentElement.querySelector('.error-message');
+                 if (!errorEl) {
+                     errorEl = document.createElement('div');
+                     errorEl.classList.add('error-message', 'text-danger', 'mt-1');
+                     input.parentElement.appendChild(errorEl);
+                 }
+                 errorEl.textContent = message;
+             }
+
+             function clearError(input) {
+                 const errorEl = input.parentElement.querySelector('.error-message');
+                 if (errorEl) errorEl.remove();
+             }
 
              form.addEventListener('submit', function(e) {
                  e.preventDefault();
@@ -385,6 +400,7 @@
                  submitBtn.disabled = true;
 
                  const formData = new FormData(form);
+
                  axios.post(form.action, formData)
                      .then(response => {
                          const data = response.data;
@@ -394,25 +410,42 @@
                                  '<span class="spinner-border spinner-border-sm me-2"></span> Redirecting...';
                              window.location.href = data.redirect || '/admin/dashboard';
                          } else {
-                             swal.fire({
-                                 icon: 'error',
-                                 title: 'Login Failed',
-                                 text: data.message
-                             })
+                             // Check if validation errors exist
+                             if (data.errors) {
+                                 Object.keys(data.errors).forEach(field => {
+                                     const input = form.querySelector(`[name="${field}"]`);
+                                     if (input) showError(input, data.errors[field][0]);
+                                 });
+                             } else {
+                                 swal.fire({
+                                     icon: 'error',
+                                     title: 'Login Failed',
+                                     text: data.message || 'Something went wrong!'
+                                 });
+                             }
                              submitBtn.innerHTML = originalText;
                              submitBtn.disabled = false;
                          }
                      })
                      .catch(error => {
-                         swal.fire({
-                             icon: 'error',
-                             title: 'Login Failed',
-                             text: (error.response?.data?.message || error.message)
-                         })
+                         if (error.response?.data?.errors) {
+                             const errors = error.response.data.errors;
+                             Object.keys(errors).forEach(field => {
+                                 const input = form.querySelector(`[name="${field}"]`);
+                                 if (input) showError(input, errors[field][0]);
+                             });
+                         } else {
+                             swal.fire({
+                                 icon: 'error',
+                                 title: 'Login Failed',
+                                 text: (error.response?.data?.message || error.message)
+                             });
+                         }
                          submitBtn.innerHTML = originalText;
                          submitBtn.disabled = false;
                      });
              });
+
 
              const signUpForm = document.getElementById('signUpForm');
              if (signUpForm) {
@@ -423,7 +456,7 @@
                      const confirmPassword = document.getElementById('signUpConfirmPassword').value;
 
                      if (password !== confirmPassword) {
-                        toastr.error('Passwords do not match.');
+                         toastr.error('Passwords do not match.');
                          return;
                      }
 
@@ -439,20 +472,20 @@
                          .then(response => {
                              const data = response.data;
                              if (data.success) {
-                                toastr.success(data.message);
+                                 toastr.success(data.message);
                                  bootstrap.Modal.getInstance(document.getElementById('signUpModal'))
                                      .hide();
                                  signUpForm.reset();
                                  submitBtn.innerHTML = originalText;
                                  submitBtn.disabled = false;
                              } else {
-                                toastr.error(data.message);
+                                 toastr.error(data.message);
                                  submitBtn.innerHTML = originalText;
                                  submitBtn.disabled = false;
                              }
                          })
                          .catch(error => {
-                            toastr.error(error.response.data.message);
+                             toastr.error(error.response.data.message);
                              submitBtn.innerHTML = originalText;
                              submitBtn.disabled = false;
                          });
@@ -467,7 +500,7 @@
 
                      const email = document.getElementById('forgotEmail').value;
                      if (!email) {
-                        toastr.error('Please enter your email address.');
+                         toastr.error('Please enter your email address.');
                          return;
                      }
 
@@ -490,7 +523,7 @@
                                  submitBtn.disabled = false;
                                  toastr.success(data.message);
                              } else {
-                                toastr.error(data.message);
+                                 toastr.error(data.message);
                                  submitBtn.innerHTML = originalText;
                                  submitBtn.disabled = false;
                              }
