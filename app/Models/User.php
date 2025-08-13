@@ -17,43 +17,58 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'first_name',
         'last_name',
+        'phone',
         'email',
         'password',
-        'phone',
-        'address',
-        'country',
-        'role',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'two_factor_confirmed_at',
+        'current_team_id',
+        'profile_photo_path',
         'otp',
         'otp_expires_at',
         'last_login_at',
         'last_login_ip',
-        'terms_accepted_at',
         'subscribe_newsletter',
+        'terms_accepted_at',
         'is_active',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
-        'otp',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'two_factor_confirmed_at' => 'datetime',
         'otp_expires_at' => 'datetime',
         'last_login_at' => 'datetime',
+        'terms_accepted_at' => 'datetime',
         'is_active' => 'boolean',
-        'password' => 'hashed',
+        'subscribe_newsletter' => 'boolean',
     ];
+
+    public function userDetails()
+    {
+        return $this->hasOne(UserDetail::class);
+    }
 
     public function isSuperAdmin(): bool
     {
-        return $this->role === 'super_admin';
+        return $this->hasRole('super_admin');
     }
 
     public function isAdmin(): bool
     {
-        return in_array($this->role, ['super_admin', 'admin', 'team_guide']);
+        return $this->hasAnyRole(['super_admin', 'admin', 'team_guide']);
+    }
+
+    public function isTourGuide(): bool
+    {
+        return $this->hasRole('tour_guide');
     }
 
     public function scopeActive($query)

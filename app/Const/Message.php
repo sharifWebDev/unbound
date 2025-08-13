@@ -13,7 +13,6 @@ class Message
     public const USER_AUTHENTICATION_FAILED = 'User authentication failed';
 
     public const CUSTOMER_CREATED_SUCCESSFULLY = 'Customer registration successfully';
-    
-    public const CUSTOMER_CREATED_FAILED = 'Customer registration failed';
 
+    public const CUSTOMER_CREATED_FAILED = 'Customer registration failed';
 }

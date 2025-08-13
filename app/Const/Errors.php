@@ -25,4 +25,6 @@ class Errors
     public const INVALID_TOKEN = 'Invalid token';
 
     public const DATA_ALREADY_EXISTS = 'Data already exists';
+
+    public const INVALID_VARIFICATION = 'Invalid verification link or link has expired.';
 }

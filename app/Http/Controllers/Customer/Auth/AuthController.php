@@ -42,11 +42,11 @@ class AuthController extends Controller
                 'email' => $response['email'],
             ], 201);
         } catch (\Exception $e) {
-            Log::error('Customer registration error: ' . $e->getMessage());
+            Log::error('Customer registration error: '.$e->getMessage());
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'An error occurred during registration.' . $e->getMessage(),
+                'message' => 'An error occurred during registration.'.$e->getMessage(),
             ], 500);
         }
     }
@@ -89,7 +89,7 @@ class AuthController extends Controller
 
             return back()->withErrors($e->errors());
         } catch (\Exception $e) {
-            Log::error('Customer login error: ' . $e->getMessage());
+            Log::error('Customer login error: '.$e->getMessage());
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
@@ -110,7 +110,7 @@ class AuthController extends Controller
 
             return redirect()->route('customer.login');
         } catch (\Exception $e) {
-            Log::error('Customer logout error: ' . $e->getMessage());
+            Log::error('Customer logout error: '.$e->getMessage());
 
             return back()->with('error', 'An error occurred during logout.');
         }
@@ -148,7 +148,7 @@ class AuthController extends Controller
             return redirect()->route('customer.login')
                 ->with('error', 'Customer not found.');
         } catch (\Exception $e) {
-            Log::error('Email verification error: ' . $e->getMessage());
+            Log::error('Email verification error: '.$e->getMessage());
 
             if ($request->expectsJson()) {
                 return response()->json([
@@ -190,7 +190,7 @@ class AuthController extends Controller
 
             return response()->json($response, 200);
         } catch (\Exception $e) {
-            Log::error('Failed to send password reset link: ' . $e->getMessage());
+            Log::error('Failed to send password reset link: '.$e->getMessage());
 
             return response()->json([
                 'status' => 'error',

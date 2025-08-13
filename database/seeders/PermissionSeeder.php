@@ -26,14 +26,14 @@ class PermissionSeeder extends Seeder
                 'name' => 'tour_guide_dashboard',
                 'alias' => 'Tour Guide Dashboard',
                 'group' => 'Dashboard',
-                'guard_name' => 'tour_guide',
+                'guard_name' => 'web',
                 'created_at' => now(),
             ],
             [
                 'name' => 'customer_dashboard',
                 'alias' => 'Customer Dashboard',
                 'group' => 'Dashboard',
-                'guard_name' => 'customer',
+                'guard_name' => 'web',
                 'created_at' => now(),
             ],
             [

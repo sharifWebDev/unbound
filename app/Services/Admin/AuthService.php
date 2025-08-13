@@ -2,24 +2,24 @@
 
 namespace App\Services\Admin;
 
-use Exception;
-use App\Models\User;
 use App\Models\Country;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Validation\ValidationException;
+use App\Models\User;
+use App\Notifications\Admin\ResetPasswordNotification;
 use App\Notifications\Admin\SendOtpNotification;
 use App\Notifications\Admin\VerifyEmailNotification;
-use App\Notifications\Admin\ResetPasswordNotification;
+use Exception;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class AuthService
 {
@@ -52,7 +52,7 @@ class AuthService
                 'email' => $user->email,
             ];
         } catch (Exception $e) {
-            Log::error('registration error: ' . $e->getMessage());
+            Log::error('registration error: '.$e->getMessage());
             throw $e;
         }
     }

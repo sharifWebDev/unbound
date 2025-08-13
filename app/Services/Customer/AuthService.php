@@ -51,7 +51,7 @@ class AuthService
                 'email' => $customer->email,
             ];
         } catch (\Exception $e) {
-            Log::error('Customer registration error: ' . $e->getMessage());
+            Log::error('Customer registration error: '.$e->getMessage());
             throw $e;
         }
     }

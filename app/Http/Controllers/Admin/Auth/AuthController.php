@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
-use Exception;
-use App\Const\Errors;
 use App\Const\Message;
-use Illuminate\View\View;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use App\Services\Admin\AuthService;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Admin\Auth\LoginRequest;
-use Illuminate\Validation\ValidationException;
 use App\Http\Requests\Admin\Auth\RegisterRequest;
+use App\Services\Admin\AuthService;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class AuthController extends Controller
 {
@@ -85,7 +84,7 @@ class AuthController extends Controller
 
             return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            Log::error('Admin login error: ' . $e->getMessage());
+            Log::error('Admin login error: '.$e->getMessage());
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
@@ -107,7 +106,7 @@ class AuthController extends Controller
 
             return redirect()->route('admin.login');
         } catch (\Exception $e) {
-            Log::error('Admin logout error: ' . $e->getMessage());
+            Log::error('Admin logout error: '.$e->getMessage());
 
             return back()->with('error', 'An error occurred during logout.');
         }
@@ -146,7 +145,7 @@ class AuthController extends Controller
             return redirect()->route('admin.login')
                 ->with('error', 'User not found.');
         } catch (\Exception $e) {
-            Log::error('Email verification error: ' . $e->getMessage());
+            Log::error('Email verification error: '.$e->getMessage());
 
             if ($request->expectsJson()) {
                 return response()->json([
@@ -189,7 +188,7 @@ class AuthController extends Controller
 
             return response()->json($response, 200);
         } catch (\Exception $e) {
-            Log::error('Failed to send password reset link: ' . $e->getMessage());
+            Log::error('Failed to send password reset link: '.$e->getMessage());
 
             return response()->json([
                 'status' => 'error',

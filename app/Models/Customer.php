@@ -18,29 +18,46 @@ class Customer extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'first_name',
         'last_name',
+        'phone',
         'email',
         'password',
-        'phone',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'two_factor_confirmed_at',
+        'current_team_id',
+        'profile_photo_path',
         'otp',
         'otp_expires_at',
         'last_login_at',
         'last_login_ip',
+        'subscribe_newsletter',
+        'terms_accepted_at',
         'is_active',
+        'scheduled_delete_at',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
-        'otp',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'two_factor_confirmed_at' => 'datetime',
         'otp_expires_at' => 'datetime',
         'last_login_at' => 'datetime',
+        'terms_accepted_at' => 'datetime',
+        'scheduled_delete_at' => 'datetime',
         'is_active' => 'boolean',
-        'password' => 'hashed',
+        'subscribe_newsletter' => 'boolean',
     ];
+
+    public function customerDetails()
+    {
+        return $this->hasOne(CustomerDetail::class);
+    }
 
     public function scopeActive($query)
     {
