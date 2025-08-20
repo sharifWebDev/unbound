@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\Auth\AuthController;
+use App\Http\Controllers\Admin\TourPackageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -64,17 +65,35 @@ Route::prefix('admin')
             Route::get('/', function () {
                 return redirect()->route('admin.dashboard');
             });
-            Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
-            Route::get('bookings', [AdminDashboardController::class, 'booking'])->name('admin.bookings.index');
-            Route::get('ongoing-bookings', [AdminDashboardController::class, 'ongoingBooking'])->name('admin.ongoing-bookings.details');
-            Route::get('custom-package-requests/details', [AdminDashboardController::class, 'customPackageRequestDetails'])->name('admin.custom-package-requests.details');
-            Route::get('payments', [AdminDashboardController::class, 'payment'])->name('admin.payments.index');
-            Route::get('payments/receipt', [AdminDashboardController::class, 'paymentReceipt'])->name('admin.payments.receipt');
-            Route::get('coupons', [AdminDashboardController::class, 'coupon'])->name('admin.coupons.index');
-            Route::get('packages', [AdminDashboardController::class, 'package'])->name('admin.packages.index');
-            Route::get('create-package', [AdminDashboardController::class, 'packageCreate'])->name('admin.packages.create');
-            Route::get('users', [AdminDashboardController::class, 'user'])->name('admin.users.index');
-            Route::get('profile', [AdminDashboardController::class, 'profile'])->name('admin.profile');
             Route::post('logout', [AuthController::class, 'logout'])->name('admin.logout');
+
+            Route::controller(AdminDashboardController::class)
+                ->group(function () {
+                    Route::get('dashboard', 'dashboard')->name('admin.dashboard');
+                    Route::get('bookings', 'booking')->name('admin.bookings.index');
+                    Route::get('ongoing-bookings', 'ongoingBooking')->name('admin.ongoing-bookings.details');
+                    Route::get('custom-package-requests/details', 'customPackageRequestDetails')->name('admin.custom-package-requests.details');
+                    Route::get('payments', 'payment')->name('admin.payments.index');
+                    Route::get('payments/receipt', 'paymentReceipt')->name('admin.payments.receipt');
+                    Route::get('coupons', 'coupon')->name('admin.coupons.index');
+                    Route::get('packages', 'package')->name('admin.packages.index');
+                    Route::get('create-package', 'packageCreate')->name('admin.packages.create');
+                    Route::get('users', 'user')->name('admin.users.index');
+                    Route::get('profile', 'profile')->name('admin.profile');
+                });
+
+            Route::prefix('/tour-packages')
+                ->controller(TourPackageController::class)
+                ->name('admin.')
+                ->group(function () {
+                    Route::get('/', 'index')->name('tour_packages.index');
+                    Route::get('/create', 'create')->name('tour_packages.create');
+                    Route::post('/', 'store')->name('tour_packages.store');
+                    Route::get('/{id}', 'show')->name('tour_packages.show');
+                    Route::get('/{id}/edit', 'edit')->name('tour_packages.edit');
+                    Route::put('/{id}', 'update')->name('tour_packages.update');
+                    // Route::patch('/{id}', 'update')->name('tour_packages.update');
+                    Route::delete('/{id}', 'destroy')->name('tour_packages.destroy');
+                });
         });
     });

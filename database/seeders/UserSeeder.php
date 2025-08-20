@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use Carbon\Carbon;
-use App\Models\User;
-use App\Models\UserDetail;
 use App\Models\Customer;
 use App\Models\CustomerDetail;
+use App\Models\User;
+use App\Models\UserDetail;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -17,6 +17,7 @@ class UserSeeder extends Seeder
     {
         $now = Carbon::now();
 
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
         User::truncate();
         UserDetail::truncate();
         Customer::truncate();
@@ -24,70 +25,78 @@ class UserSeeder extends Seeder
 
         $usersData = [
             [
-                'first_name'        => 'Super',
-                'last_name'         => 'Admin',
-                'email'             => 'super_admin@gmail.com',
+                'first_name' => 'Super',
+                'last_name' => 'Admin',
+                'email' => 'super_admin@gmail.com',
                 'email_verified_at' => $now,
-                'password'          => Hash::make('12345678'),
-                'phone'             => '0000000000',
-                'otp'               => null,
-                'otp_expires_at'    => null,
-                'last_login_at'     => $now,
-                'last_login_ip'     => '127.0.0.1',
+                'password' => Hash::make('12345678'),
+                'phone' => '0000000000',
+                'otp' => null,
+                'otp_expires_at' => null,
+                'last_login_at' => $now,
+                'last_login_ip' => '127.0.0.1',
                 'terms_accepted_at' => $now,
                 'subscribe_newsletter' => true,
-                'is_active'         => true,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-                'role'              => 'super_admin',
+                'is_tour_guide' => false,
+                'is_active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+                // 'role'              => 'super_admin',
+                'two_factor_confirmed_at' => $now,
+                'deleted_at' => null,
             ],
             [
-                'first_name'        => 'Admin',
-                'last_name'         => 'User',
-                'email'             => 'admin@gmail.com',
+                'first_name' => 'Admin',
+                'last_name' => 'User',
+                'email' => 'admin@gmail.com',
                 'email_verified_at' => $now,
-                'password'          => Hash::make('12345678'),
-                'phone'             => '0000000000',
-                'otp'               => null,
-                'otp_expires_at'    => null,
-                'last_login_at'     => $now,
-                'last_login_ip'     => '127.0.0.1',
+                'password' => Hash::make('12345678'),
+                'phone' => '0000000000',
+                'otp' => null,
+                'otp_expires_at' => null,
+                'last_login_at' => $now,
+                'last_login_ip' => '127.0.0.1',
                 'terms_accepted_at' => $now,
                 'subscribe_newsletter' => true,
-                'is_active'         => true,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-                'role'              => 'admin',
+                'is_tour_guide' => false,
+                'is_active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+                // 'role'              => 'admin',
+                'two_factor_confirmed_at' => $now,
+                'deleted_at' => null,
             ],
             [
-                'first_name'        => 'Tour',
-                'last_name'         => 'Guide',
-                'email'             => 'tour_guide@gmail.com',
+                'first_name' => 'Tour',
+                'last_name' => 'Guide',
+                'email' => 'tour_guide@gmail.com',
                 'email_verified_at' => $now,
-                'password'          => Hash::make('12345678'),
-                'phone'             => '0000000000',
-                'otp'               => null,
-                'otp_expires_at'    => null,
-                'last_login_at'     => $now,
-                'last_login_ip'     => '127.0.0.1',
+                'password' => Hash::make('12345678'),
+                'phone' => '0000000000',
+                'otp' => null,
+                'otp_expires_at' => null,
+                'last_login_at' => $now,
+                'last_login_ip' => '127.0.0.1',
                 'terms_accepted_at' => $now,
                 'subscribe_newsletter' => true,
-                'is_active'         => true,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-                'role'              => 'tour_guide',
+                'is_tour_guide' => true,
+                'is_active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+                // 'role'              => 'tour_guide',
+                'two_factor_confirmed_at' => $now,
+                'deleted_at' => null,
             ],
         ];
 
         foreach ($usersData as $data) {
 
             $user = User::create($data);
-            
+
             UserDetail::create([
-                'user_id'   => $user->id,
-                'address'   => 'Dhaka, Bangladesh',
+                'user_id' => $user->id,
+                'address' => 'Dhaka, Bangladesh',
                 'nationality' => 'Bangladeshi',
-                'designation' => ucfirst(str_replace('_', ' ', $data['role'])),
                 'country_id' => 1,
             ]);
         }
@@ -96,31 +105,33 @@ class UserSeeder extends Seeder
          *  Create Customers with Details
          *  ───────────────────────────── */
         $customer = Customer::create([
-            'first_name'        => 'Customer',
-            'last_name'         => 'User',
-            'email'             => 'customer@gmail.com',
+            'first_name' => 'Customer',
+            'last_name' => 'User',
+            'email' => 'customer@gmail.com',
             'email_verified_at' => $now,
-            'password'          => Hash::make('12345678'),
-            'phone'             => '0000000000',
-            'otp'               => null,
-            'otp_expires_at'    => null,
-            'last_login_at'     => $now,
-            'last_login_ip'     => '127.0.0.1',
+            'password' => Hash::make('12345678'),
+            'phone' => '0000000000',
+            'otp' => null,
+            'otp_expires_at' => null,
+            'last_login_at' => $now,
+            'last_login_ip' => '127.0.0.1',
             'terms_accepted_at' => $now,
             'subscribe_newsletter' => true,
-            'is_active'         => true,
-            'created_at'        => $now,
-            'updated_at'        => $now,
+            'is_active' => true,
+            'created_at' => $now,
+            'updated_at' => $now,
         ]);
 
         CustomerDetail::create([
-            'customer_id'         => $customer->id,
-            'address'             => 'Dhaka, Bangladesh',
-            'nationality'         => 'Bangladeshi',
-            'preferred_language'  => 'English',
+            'customer_id' => $customer->id,
+            'address' => 'Dhaka, Bangladesh',
+            'nationality' => 'Bangladeshi',
+            'preferred_language' => 'English',
             'email_notifications' => true,
-            'marketing_updates'   => false,
-            'country_id'          => 1,
+            'marketing_updates' => false,
+            'country_id' => 1,
         ]);
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }
